@@ -1,0 +1,11 @@
+name: SwordsGame
+main: me.coolblinger.swordsgame.SwordsGame
+autthor: coolblinger
+version: 0.1DEV
+description: >
+  A GunGame like PvP game for Minecraft.
+commands:
+   sg:
+      description: Main command for SwordsGame
+      usage: /<command>
+      aliases: swordsgame

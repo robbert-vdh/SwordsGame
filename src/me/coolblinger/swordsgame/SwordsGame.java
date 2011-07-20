@@ -1,0 +1,131 @@
+package me.coolblinger.swordsgame;
+
+import com.nijiko.permissions.PermissionHandler;
+import com.nijikokun.bukkit.Permissions.Permissions;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.*;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.logging.Logger;
+
+public class SwordsGame extends JavaPlugin {
+	Logger log = Logger.getLogger("Minecraft");
+	PermissionHandler permissions;
+	SwordsGamePlayerListener playerListener = new SwordsGamePlayerListener(this);
+	private boolean saving;
+	HashMap<String, SwordsGameClass> games = new HashMap<String, SwordsGameClass>(); // The first string, the identifier, is the arena name.
+	HashMap<String, SwordsGameArenaClass> arenas = new HashMap<String, SwordsGameArenaClass>();
+	HashMap<Player, SwordsGameDefine> define = new HashMap<Player, SwordsGameDefine>();
+
+	@Override
+	public void onDisable() {
+		// Saving arenas
+		File arenaFile = new File("plugins" + File.separator + "SwordsGame" + File.separator + "arenas.dat");
+		if (saving) {
+			try {
+				FileOutputStream arenaFileInputStream = new FileOutputStream(arenaFile);
+				ObjectOutputStream arenaFileObjectInputStream = new ObjectOutputStream(arenaFileInputStream);
+				arenaFileObjectInputStream.writeObject(arenas);
+				arenaFileObjectInputStream.flush();
+				arenaFileObjectInputStream.close();
+			} catch (Exception e) {
+				log.severe("'arenas.dat' could not be written to.");
+			}
+		}
+		PluginDescriptionFile pdFile = this.getDescription();
+		log.info(pdFile.getName() + " unloaded!");
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void onEnable() {
+		File SwordsGameDirectory = new File("plugins" + File.separator + "SwordsGame");
+		SwordsGameDirectory.mkdir();
+		PluginDescriptionFile pdFile = this.getDescription();
+		PluginManager pm = getServer().getPluginManager();
+		// Autodownloading BukkitContrib
+		if (pm.getPlugin("BukkitContrib") == null) {
+			try {
+				downloadBukkitContrib();
+				pm.loadPlugin(new File("plugins" + File.separator + "BukkitContrib.jar"));
+				pm.enablePlugin(pm.getPlugin("BukkitContrib"));
+			} catch (Exception e) {
+				log.warning("Failed to install BukkitContrib, you may have to restart your server or install it manually.");
+			}
+		}
+		// Initialize permissions:
+		Plugin permissionsPlugin = pm.getPlugin("Permissions");
+		if (permissionsPlugin == null) {
+			log.severe("Permissions was not found, " + pdFile.getName() + " will disable itself.");
+			this.setEnabled(false);
+			return;
+		}
+		permissions = ((Permissions) permissionsPlugin).getHandler();
+		// Loading arenas
+		File arenaFile = new File("plugins/SwordsGame/arenas.dat");
+		if (!arenaFile.exists() || arenaFile.length() == 0) {
+			try {
+				arenaFile.createNewFile();
+				saving = true;
+			} catch (Exception e) {
+				log.severe("'arenas.dat' could not be made. Arena saving is disabled.");
+				saving = false;
+			}
+
+		} else {
+			try {
+				FileInputStream arenaFileInputStream = new FileInputStream(arenaFile);
+				ObjectInputStream arenaFileObjectInputStream = new ObjectInputStream(arenaFileInputStream);
+				arenas = (HashMap<String, SwordsGameArenaClass>) arenaFileObjectInputStream.readObject();
+				arenaFileObjectInputStream.close();
+				saving = true;
+			} catch (Exception e) {
+				log.severe("'arenas.dat' could not be read, arena loading and saving has been disabled.");
+				saving = false;
+			}
+		}
+		pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
+		log.info(pdFile.getName() + " version " + pdFile.getVersion() + " loaded!");
+	}
+
+	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
+		SwordsGameCommand cmd = new SwordsGameCommand(this);
+		return cmd.execute(sender, command, commandLabel, args);
+	}
+
+	public void downloadBukkitContrib() throws IOException {
+		File file = new File("plugins" + File.separator + "BukkitContrib.jar");
+		URL url = new URL("http://dl.dropbox.com/u/49805/BukkitContrib.jar");
+		if (!file.getParentFile().exists())
+			file.getParentFile().mkdir();
+		if (file.exists())
+			file.delete();
+		file.createNewFile();
+		final int size = url.openConnection().getContentLength();
+		log.info("Downloading " + file.getName() + " (" + size / 1024 + "kb) ...");
+		final InputStream in = url.openStream();
+		final OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+		final byte[] buffer = new byte[1024];
+		int len, downloaded = 0, msgs = 0;
+		final long start = System.currentTimeMillis();
+		while ((len = in.read(buffer)) >= 0) {
+			out.write(buffer, 0, len);
+			downloaded += len;
+			if ((int) ((System.currentTimeMillis() - start) / 500) > msgs) {
+				log.info((int) ((double) downloaded / (double) size * 100d) + "%");
+				msgs++;
+			}
+		}
+		in.close();
+		out.close();
+		log.info("Download finished");
+	}
+}
