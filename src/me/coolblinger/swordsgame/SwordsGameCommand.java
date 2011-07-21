@@ -8,6 +8,8 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkitcontrib.player.ContribPlayer;
 
+import java.util.Arrays;
+
 public class SwordsGameCommand {
 	SwordsGame plugin;
 
@@ -30,6 +32,9 @@ public class SwordsGameCommand {
 				if (args[0].equalsIgnoreCase("define")) {
 					define(player, args);
 					return true;
+				} else if (args[0].equalsIgnoreCase("remove")) {
+					remove(player, args);
+					return true;
 				} else if (args[0].equalsIgnoreCase("list")) {
 					list(player, args);
 					return true;
@@ -48,11 +53,14 @@ public class SwordsGameCommand {
 	public void printCommandList(Player player) {
 		player.sendMessage(ChatColor.GOLD + "SwordsGame:");
 		player.sendMessage(ChatColor.GOLD + "-----------");
-		if (plugin.permissions.has(player, "swordsgame.play")) {
-			player.sendMessage(ChatColor.GOLD + "/sg list <#> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Arena list");
-		}
 		if (plugin.permissions.has(player, "swordsgame.define")) {
 			player.sendMessage(ChatColor.GOLD + "/sg define " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Define a new arena");
+		}
+		if (plugin.permissions.has(player, "swordsgame.define")) {
+			player.sendMessage(ChatColor.GOLD + "/sg remove <name> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Remove an arena");
+		}
+		if (plugin.permissions.has(player, "swordsgame.play")) {
+			player.sendMessage(ChatColor.GOLD + "/sg list <#> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Arena list");
 		}
 	}
 
@@ -71,7 +79,7 @@ public class SwordsGameCommand {
 							player.sendMessage(ChatColor.GREEN + "Arena '" + ChatColor.WHITE + args[1] + ChatColor.GREEN + "' has been created!");
 							plugin.define.remove(player);
 						} else {
-							player.sendMessage(ChatColor.RED + "An arena with that name already exists");
+							player.sendMessage(ChatColor.RED + "An arena with that name already exists.");
 						}
 					} else {
 						player.sendMessage(ChatColor.RED + "You need to specify a name for the new arena.");
@@ -86,9 +94,27 @@ public class SwordsGameCommand {
 		}
 	}
 
+	public void remove(Player player, String[] args) {
+		if (plugin.permissions.has(player, "swordsgame.define")) {
+			if (args[1] != null) {
+				if (plugin.arenas.containsKey(args[1])) {
+					plugin.arenas.remove(args[1]);
+					player.sendMessage(ChatColor.GREEN + "Arena '" + ChatColor.WHITE + args[1] + ChatColor.GREEN + "' has been removed.");
+				} else {
+					player.sendMessage(ChatColor.RED + "Invalid arena name specified.");
+				}
+			} else {
+				player.sendMessage(ChatColor.RED + "You need to specify the name of the arena you want to remove.");
+			}
+		} else {
+			printCommandList(player);
+		}
+	}
+
 	public void list(Player player, String[] args) {
 		if (plugin.permissions.has(player, "swordsgame.play")) {
 			Object[] arenaList = plugin.arenas.keySet().toArray();
+			Arrays.sort(arenaList);
 			int multiplier;
 			try {
 				multiplier = Integer.parseInt(args[1]);
@@ -114,6 +140,8 @@ public class SwordsGameCommand {
 					return; // An easier way of checking if the value is null.
 				}
 			}
+		} else {
+			printCommandList(player);
 		}
 	}
 }

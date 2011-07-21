@@ -22,14 +22,14 @@ public class SwordsGamePlayerListener extends PlayerListener {
 					Vector vector = event.getClickedBlock().getLocation().toVector();
 					boolean corner = plugin.define.get(player).setCorner(vector, player.getWorld(), player);
 					if (corner) {
-						player.sendMessage(ChatColor.GREEN + "Second corner has been set to " + ChatColor.WHITE + vector.toString());
+						player.sendMessage(ChatColor.GREEN + "Second corner has been set to " + ChatColor.WHITE + vector.toString() + ChatColor.GREEN + ".");
 					} else if (!corner) {
-						player.sendMessage(ChatColor.GREEN + "First corner has been set to " + ChatColor.WHITE + vector.toString());
+						player.sendMessage(ChatColor.GREEN + "First corner has been set to " + ChatColor.WHITE + vector.toString() + ChatColor.GREEN + ".");
 					}
 				}
 			} else {
 				plugin.define.remove(player);
-				player.sendMessage(ChatColor.RED + "Defining has been canceled");
+				player.sendMessage(ChatColor.RED + "Defining has been canceled.");
 			}
 		}
 	}
