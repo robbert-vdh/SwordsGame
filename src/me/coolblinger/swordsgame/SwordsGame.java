@@ -37,7 +37,7 @@ public class SwordsGame extends JavaPlugin {
 				arenaFileObjectInputStream.flush();
 				arenaFileObjectInputStream.close();
 			} catch (Exception e) {
-				log.severe("'arenas.dat' could not be written to. (is it corrupt?)");
+				log.severe("'arenas.dat' could not be written to. (is it outdated?)");
 			}
 		}
 		PluginDescriptionFile pdFile = this.getDescription();
@@ -88,7 +88,7 @@ public class SwordsGame extends JavaPlugin {
 				arenaFileObjectInputStream.close();
 				saving = true;
 			} catch (Exception e) {
-				log.severe("'arenas.dat' could not be read (is it corrupt?), arena loading and saving has been disabled.");
+				log.severe("'arenas.dat' could not be read (is it outdated?), arena loading and saving has been disabled.");
 				saving = false;
 			}
 		}

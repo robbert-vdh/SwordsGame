@@ -35,6 +35,9 @@ public class SwordsGameCommand {
 				} else if (args[0].equalsIgnoreCase("remove")) {
 					remove(player, args);
 					return true;
+				} else if (args[0].equalsIgnoreCase("setspawn")) {
+					setSpawn(player, args);
+					return true;
 				} else if (args[0].equalsIgnoreCase("list")) {
 					list(player, args);
 					return true;
@@ -57,7 +60,10 @@ public class SwordsGameCommand {
 			player.sendMessage(ChatColor.GOLD + "/sg define " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Define a new arena");
 		}
 		if (plugin.permissions.has(player, "swordsgame.define")) {
-			player.sendMessage(ChatColor.GOLD + "/sg remove <name> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Remove an arena");
+			player.sendMessage(ChatColor.GOLD + "/sg remove <arena> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Remove an arena");
+		}
+		if (plugin.permissions.has(player, "swordsgame.define")) {
+			player.sendMessage(ChatColor.GOLD + "/sg setspawn <arena> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Set the spawns for an arena");
 		}
 		if (plugin.permissions.has(player, "swordsgame.play")) {
 			player.sendMessage(ChatColor.GOLD + "/sg list <#> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Arena list");
@@ -77,6 +83,8 @@ public class SwordsGameCommand {
 						if (!plugin.arenas.containsKey(args[1])) {
 							plugin.arenas.put(args[1], new SwordsGameArenaClass(plugin.define.get(player).world.getName(), plugin.define.get(player).corner1, plugin.define.get(player).corner2));
 							player.sendMessage(ChatColor.GREEN + "Arena '" + ChatColor.WHITE + args[1] + ChatColor.GREEN + "' has been created!");
+							player.sendMessage(ChatColor.GREEN + "You should set four spawnpoints now, using " + ChatColor.GOLD + "/sg setspawn      <arena>" + ChatColor.GREEN + ".");
+							cPlayer.sendNotification("Setting spawnpoints", "/sg setspawn <arena>", Material.MAP);
 							plugin.define.remove(player);
 						} else {
 							player.sendMessage(ChatColor.RED + "An arena with that name already exists.");
@@ -96,7 +104,7 @@ public class SwordsGameCommand {
 
 	public void remove(Player player, String[] args) {
 		if (plugin.permissions.has(player, "swordsgame.define")) {
-			if (args[1] != null) {
+			if (args.length >= 2) {
 				if (plugin.arenas.containsKey(args[1])) {
 					plugin.arenas.remove(args[1]);
 					player.sendMessage(ChatColor.GREEN + "Arena '" + ChatColor.WHITE + args[1] + ChatColor.GREEN + "' has been removed.");
@@ -104,7 +112,28 @@ public class SwordsGameCommand {
 					player.sendMessage(ChatColor.RED + "Invalid arena name specified.");
 				}
 			} else {
-				player.sendMessage(ChatColor.RED + "You need to specify the name of the arena you want to remove.");
+				player.sendMessage(ChatColor.RED + "You need to specify the name of the arena you want to         remove.");
+			}
+		} else {
+			printCommandList(player);
+		}
+	}
+
+	public void setSpawn(Player player, String[] args) { // TODO: Add them based on right clicking, like defining
+		if (plugin.permissions.has(player, "swordsgame.define")) {
+			if (args.length >= 2) {
+				if (plugin.arenas.containsKey(args[1])) {
+					int addSpawn = plugin.arenas.get(args[1]).setSpawn(player.getLocation().toVector());
+					if (addSpawn != 0) {
+						player.sendMessage(ChatColor.GREEN + "Added spawn " + ChatColor.WHITE + addSpawn + ChatColor.GREEN + " out of " + ChatColor.WHITE + "4" + ChatColor.GREEN + ".");
+					} else {
+						player.sendMessage(ChatColor.RED + "You've already created four spawns.");
+					}
+				} else {
+					player.sendMessage(ChatColor.RED + "Invalid arena name specified.");
+				}
+			} else {
+				player.sendMessage(ChatColor.RED + "You need to specify the name of the arena you want to         set spawns for.");
 			}
 		} else {
 			printCommandList(player);
@@ -125,6 +154,9 @@ public class SwordsGameCommand {
 				multiplier = 1;
 			}
 			int showingFrom = multiplier * 10 - 9;
+			if (arenaList.length == 0) {
+				showingFrom = 0;
+			}
 			int showingTo;
 			if (showingFrom + 10 > arenaList.length) {
 				showingTo = arenaList.length;

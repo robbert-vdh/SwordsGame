@@ -1,4 +1,4 @@
-# Tested with RB 1000
+# Tested with RB [_1000_] (http://ci.bukkit.org/job/dev-CraftBukkit/1000/)
 ## Dependencies:
 -   Permissions 3
 -   BukkitContrib (will be downloaded automatically)
@@ -12,5 +12,6 @@
 -   Add configs for various things
 
 ## Notes:
+-   I would GREATLY appreciate it if people could help me fix the English localisation.
 -   The client side BukkitContrib mod is not required, but it will make the experience better, using sounds, notes and several other things.
 -   There's currently a limit of four people per game, but this will be customizable in the future.

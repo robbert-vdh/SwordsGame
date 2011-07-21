@@ -20,10 +20,9 @@ public class SwordsGamePlayerListener extends PlayerListener {
 			if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 				if (event.getClickedBlock() != null) {
 					Vector vector = event.getClickedBlock().getLocation().toVector();
-					boolean corner = plugin.define.get(player).setCorner(vector, player.getWorld(), player);
-					if (corner) {
+					if (plugin.define.get(player).setCorner(vector, player.getWorld(), player)) {
 						player.sendMessage(ChatColor.GREEN + "Second corner has been set to " + ChatColor.WHITE + vector.toString() + ChatColor.GREEN + ".");
-					} else if (!corner) {
+					} else {
 						player.sendMessage(ChatColor.GREEN + "First corner has been set to " + ChatColor.WHITE + vector.toString() + ChatColor.GREEN + ".");
 					}
 				}

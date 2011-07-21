@@ -27,7 +27,7 @@ class SwordsGameDefine {
 			secondcorner = false;
 			if (corner1 != null && corner2 != null && !showedWarning) {
 				ContribPlayer cPlayer = (ContribPlayer) player;
-				cPlayer.sendNotification("Defining", "Type '/sg define <name>'", Material.MAP);
+				cPlayer.sendNotification("Defining", "/sg define <name>'", Material.MAP);
 				showedWarning = true;
 			}
 			return true;
