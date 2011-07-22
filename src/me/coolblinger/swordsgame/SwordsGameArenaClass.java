@@ -39,6 +39,14 @@ public class SwordsGameArenaClass implements Serializable {
 		return 0;
 	}
 
+	public void resetSpawns() {
+		for (int i = 0; i <= 3; i++) {
+			spawnX[i] = 0;
+			spawnY[i] = 0;
+			spawnZ[i] = 0;
+		}
+	}
+
 	public boolean isPrepared() { //Will return true when all four spawnpoints have been set
 		for (int i = 0; i <= 3; i++) {
 			if (spawnX[i] == 0 && spawnY[i] == 0 && spawnZ[i] == 0) {

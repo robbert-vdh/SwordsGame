@@ -38,6 +38,9 @@ public class SwordsGameCommand {
 				} else if (args[0].equalsIgnoreCase("setspawn")) {
 					setSpawn(player);
 					return true;
+				} else if (args[0].equalsIgnoreCase("resetspawns")) {
+					resetSpawns(player, args);
+					return true;
 				} else if (args[0].equalsIgnoreCase("list")) {
 					list(player, args);
 					return true;
@@ -64,6 +67,9 @@ public class SwordsGameCommand {
 		}
 		if (plugin.permissions.has(player, "swordsgame.define")) {
 			player.sendMessage(ChatColor.GOLD + "/sg setspawn " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Set the spawns for an arena");
+		}
+		if (plugin.permissions.has(player, "swordsgame.define")) {
+			player.sendMessage(ChatColor.GOLD + "/sg resetspawns <arena> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Reset the spawns for an arena");
 		}
 		if (plugin.permissions.has(player, "swordsgame.play")) {
 			player.sendMessage(ChatColor.GOLD + "/sg list <#> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Arena list");
@@ -129,6 +135,23 @@ public class SwordsGameCommand {
 				} else {
 					player.sendMessage(ChatColor.RED + "You can't set spawns while defining arenas.");
 				}
+			}
+		} else {
+			printCommandList(player);
+		}
+	}
+
+	public void resetSpawns(Player player, String[] args) {
+		if (plugin.permissions.has(player, "swordsgame.define")) {
+			if (args.length >= 2) {
+				if (plugin.arenas.containsKey(args[1])) {
+					plugin.arenas.get(args[1]).resetSpawns();
+					player.sendMessage(ChatColor.GREEN + "Spawns for arena '" + ChatColor.WHITE + args[1] + ChatColor.GREEN + "' have been reset.");
+				} else {
+					player.sendMessage(ChatColor.RED + "Invalid arena name specified.");
+				}
+			} else {
+				player.sendMessage(ChatColor.RED + "You need to specify the name of an arena.");
 			}
 		} else {
 			printCommandList(player);
