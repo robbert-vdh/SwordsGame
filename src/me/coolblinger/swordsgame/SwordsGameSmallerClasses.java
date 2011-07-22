@@ -14,6 +14,11 @@ class SwordsGameDefine {
 	boolean secondcorner;
 	World world;
 	boolean showedWarning;
+	String mode;
+
+	public SwordsGameDefine(String _mode) {
+		mode = _mode;
+	}
 
 	public boolean setCorner(Vector vector, World _world, Player player) {
 		if (_world != world) {
@@ -27,7 +32,7 @@ class SwordsGameDefine {
 			secondcorner = false;
 			if (corner1 != null && corner2 != null && !showedWarning) {
 				ContribPlayer cPlayer = (ContribPlayer) player;
-				cPlayer.sendNotification("Defining", "/sg define <name>'", Material.MAP);
+				cPlayer.sendNotification("Defining", "/sg define <name>", Material.MAP);
 				showedWarning = true;
 			}
 			return true;
@@ -36,7 +41,7 @@ class SwordsGameDefine {
 			secondcorner = true;
 			if (corner1 != null && corner2 != null && !showedWarning) {
 				ContribPlayer cPlayer = (ContribPlayer) player;
-				cPlayer.sendNotification("Help", "Type '/define <name>' to finish.", Material.MAP);
+				cPlayer.sendNotification("Defining", "/sg define <name>", Material.MAP);
 				showedWarning = true;
 			}
 			return false;

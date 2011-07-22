@@ -36,7 +36,7 @@ public class SwordsGameCommand {
 					remove(player, args);
 					return true;
 				} else if (args[0].equalsIgnoreCase("setspawn")) {
-					setSpawn(player, args);
+					setSpawn(player);
 					return true;
 				} else if (args[0].equalsIgnoreCase("list")) {
 					list(player, args);
@@ -63,7 +63,7 @@ public class SwordsGameCommand {
 			player.sendMessage(ChatColor.GOLD + "/sg remove <arena> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Remove an arena");
 		}
 		if (plugin.permissions.has(player, "swordsgame.define")) {
-			player.sendMessage(ChatColor.GOLD + "/sg setspawn <arena> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Set the spawns for an arena");
+			player.sendMessage(ChatColor.GOLD + "/sg setspawn " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Set the spawns for an arena");
 		}
 		if (plugin.permissions.has(player, "swordsgame.play")) {
 			player.sendMessage(ChatColor.GOLD + "/sg list <#> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Arena list");
@@ -74,17 +74,17 @@ public class SwordsGameCommand {
 		if (plugin.permissions.has(player, "swordsgame.define")) {
 			ContribPlayer cPlayer = (ContribPlayer) player;
 			if (!plugin.define.containsKey(player)) {
-				plugin.define.put(player, new SwordsGameDefine());
+				plugin.define.put(player, new SwordsGameDefine("define"));
 				cPlayer.sendNotification("Defining", "Right click both corners", Material.MAP);
 				player.sendMessage(ChatColor.GREEN + "Right click at both corners of the arena. You can type          " + ChatColor.GOLD + "/sg define <name>" + ChatColor.GREEN + " when you're done, or left click to cancel.");
 			} else {
-				if (plugin.define.get(player).corner1 != null && plugin.define.get(player).corner2 != null) {
+				if (plugin.define.get(player).corner1 != null && plugin.define.get(player).corner2 != null && plugin.define.get(player).mode == "define") {
 					if (args.length >= 2) {
 						if (!plugin.arenas.containsKey(args[1])) {
-							plugin.arenas.put(args[1], new SwordsGameArenaClass(plugin.define.get(player).world.getName(), plugin.define.get(player).corner1, plugin.define.get(player).corner2));
+							plugin.arenas.put(args[1], new SwordsGameArenaClass(args[1], plugin.define.get(player).world.getName(), plugin.define.get(player).corner1, plugin.define.get(player).corner2));
 							player.sendMessage(ChatColor.GREEN + "Arena '" + ChatColor.WHITE + args[1] + ChatColor.GREEN + "' has been created!");
-							player.sendMessage(ChatColor.GREEN + "You should set four spawnpoints now, using " + ChatColor.GOLD + "/sg setspawn      <arena>" + ChatColor.GREEN + ".");
-							cPlayer.sendNotification("Setting spawnpoints", "/sg setspawn <arena>", Material.MAP);
+							player.sendMessage(ChatColor.GREEN + "You should set four spawnpoints now, using " + ChatColor.GOLD + "/sg setspawn" + ChatColor.GREEN + ".");
+							cPlayer.sendNotification("Setting spawnpoints", "/sg setspawn", Material.MAP);
 							plugin.define.remove(player);
 						} else {
 							player.sendMessage(ChatColor.RED + "An arena with that name already exists.");
@@ -92,9 +92,6 @@ public class SwordsGameCommand {
 					} else {
 						player.sendMessage(ChatColor.RED + "You need to specify a name for the new arena.");
 					}
-				} else {
-					plugin.define.remove(player);
-					player.sendMessage(ChatColor.RED + "Defining has been canceled");
 				}
 			}
 		} else {
@@ -119,21 +116,19 @@ public class SwordsGameCommand {
 		}
 	}
 
-	public void setSpawn(Player player, String[] args) { // TODO: Add them based on right clicking, like defining
+	public void setSpawn(Player player) {
+		ContribPlayer cPlayer = (ContribPlayer) player;
 		if (plugin.permissions.has(player, "swordsgame.define")) {
-			if (args.length >= 2) {
-				if (plugin.arenas.containsKey(args[1])) {
-					int addSpawn = plugin.arenas.get(args[1]).setSpawn(player.getLocation().toVector());
-					if (addSpawn != 0) {
-						player.sendMessage(ChatColor.GREEN + "Added spawn " + ChatColor.WHITE + addSpawn + ChatColor.GREEN + " out of " + ChatColor.WHITE + "4" + ChatColor.GREEN + ".");
-					} else {
-						player.sendMessage(ChatColor.RED + "You've already created four spawns.");
-					}
-				} else {
-					player.sendMessage(ChatColor.RED + "Invalid arena name specified.");
-				}
+			if (!plugin.define.containsKey(player)) {
+				plugin.define.put(player, new SwordsGameDefine("setspawn"));
+				cPlayer.sendNotification("Setting spawns", "Right click", Material.MAP);
+				player.sendMessage(ChatColor.GREEN + "Right click inside an arena at the desired location. You can leftclick when you're done.");
 			} else {
-				player.sendMessage(ChatColor.RED + "You need to specify the name of the arena you want to         set spawns for.");
+				if (plugin.define.get(player).mode == "setspawn") {
+					player.sendMessage(ChatColor.RED + "You're already setting spawns.");
+				} else {
+					player.sendMessage(ChatColor.RED + "You can't set spawns while defining arenas.");
+				}
 			}
 		} else {
 			printCommandList(player);

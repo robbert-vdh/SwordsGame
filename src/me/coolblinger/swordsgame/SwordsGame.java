@@ -10,10 +10,13 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class SwordsGame extends JavaPlugin {
@@ -127,5 +130,34 @@ public class SwordsGame extends JavaPlugin {
 		in.close();
 		out.close();
 		log.info("Download finished");
+	}
+
+	public Double clamp(Double value, Double compare1, Double compare2) {
+		double min;
+		double max;
+		if (compare2 < compare1) {
+			max = compare1;
+			min = compare2;
+		} else {
+			max = compare2;
+			min = compare1;
+		}
+		if (value.compareTo(max) > 0) {
+			return max;
+		} else if (value.compareTo(min) < 0) {
+			return min;
+		} else {
+			return value;
+		}
+	}
+
+	public String getArena(Vector vector) { // An easy way to see which arena a coordinate belongs to.
+		List<SwordsGameArenaClass> arenaList = new ArrayList<SwordsGameArenaClass>(arenas.values());
+		for (SwordsGameArenaClass arena : arenaList) {
+			if (clamp(vector.getX(), arena.cornerX[0], arena.cornerX[1]) == vector.getX() && clamp(vector.getZ(), arena.cornerZ[0], arena.cornerZ[1]) == vector.getZ()) {
+				return arena.name;
+			}
+		}
+		return null;
 	}
 }

@@ -5,11 +5,12 @@
 
 ## Permission nodes:
 -   swordsgame.define - Define and remove arenas
--   swordsgame.play - Play (or create a game when there is no available) and list games/arenas.
+-   swordsgame.play - Play (or create a game when there is no available) and list games/arenas
 
 ## Todo:
+-   Some major code rewriting.
 -   Boot people from games when they use fly- or speedhacks.
--   Add configs for various things
+-   Add configs for various things.
 
 ## Notes:
 -   I would GREATLY appreciate it if people could help me fix the English localisation.
