@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.util.Vector;
 
 public class SwordsGamePlayerListener extends PlayerListener {
@@ -12,6 +13,12 @@ public class SwordsGamePlayerListener extends PlayerListener {
 
     public SwordsGamePlayerListener(SwordsGame instance) {
         plugin = instance;
+    }
+
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        if (plugin.players.containsKey(event.getPlayer())) {
+            plugin.players.get(event.getPlayer()).restore();
+        }
     }
 
     public void onPlayerInteract(PlayerInteractEvent event) {

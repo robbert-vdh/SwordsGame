@@ -47,6 +47,9 @@ public class SwordsGameCommand {
                 } else if (args[0].equalsIgnoreCase("game")) {
                     game(player, args);
                     return true;
+                } else if (args[0].equalsIgnoreCase("leave")) {
+                    leave(player);
+                    return true;
                 } else {
                     printCommandList(player);
                     return true;
@@ -78,7 +81,10 @@ public class SwordsGameCommand {
             player.sendMessage(ChatColor.GOLD + "/sg list <#> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Arena list");
         }
         if (plugin.permissions.has(player, "swordsgame.play")) {
-            player.sendMessage(ChatColor.GOLD + "/sg game <arena>");
+            player.sendMessage(ChatColor.GOLD + "/sg game <arena>" + ChatColor.WHITE + "-" + ChatColor.AQUA + " Create or join a game in the specified arena");
+        }
+        if (plugin.permissions.has(player, "swordsgame.play")) {
+            player.sendMessage(ChatColor.GOLD + "/sg leave" + ChatColor.WHITE + "-" + ChatColor.AQUA + " Leave the current game ");
         }
     }
 
@@ -213,20 +219,36 @@ public class SwordsGameCommand {
         if (plugin.permissions.has(player, "swordsgame.play")) {
             if (args.length >= 2) {
                 if (plugin.arenas.containsKey(args[1])) {
-                    if (!plugin.games.containsKey(args[1])) {
-                        plugin.games.put(args[1], new SwordsGameClass(player, plugin.arenas.get(args[1])));
-                    } else {
-                        if (!plugin.games.get(args[1]).checkPlayer(player)) { // TODO: Add this check for every game
-                            plugin.games.get(args[1]).addPlayer(player);
+                    if (!plugin.players.containsKey(player)) {
+                        if (!plugin.games.containsKey(args[1])) {
+                            plugin.games.put(args[1], new SwordsGameClass(player, plugin.arenas.get(args[1]), plugin));
                         } else {
-                            player.sendMessage(ChatColor.RED + "You're already in this game.");
+                            if (!plugin.games.get(args[1]).isFull()) {
+                                plugin.games.get(args[1]).addPlayer(player);
+                            } else {
+                                player.sendMessage(ChatColor.RED + "This game is full.");
+                            }
                         }
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You're already in a game.");
                     }
                 } else {
                     player.sendMessage(ChatColor.RED + "Invalid arena name.");
                 }
             } else {
                 player.sendMessage(ChatColor.RED + "You need to specify the name of the arena you want to play in.");
+            }
+        } else {
+            printCommandList(player);
+        }
+    }
+
+    public void leave(Player player) {
+        if (plugin.permissions.has(player, "swordsgame.play")) {
+            if (plugin.players.containsKey(player)) {
+                plugin.players.get(player).restore();
+            } else {
+                player.sendMessage(ChatColor.RED + "You're not in a game.");
             }
         } else {
             printCommandList(player);

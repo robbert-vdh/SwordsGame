@@ -4,7 +4,7 @@
 -   BukkitContrib (will be downloaded automatically)
 
 ## Permission nodes:
--   swordsgame.define - Define and remove arenas
+-   swordsgame.define - Define/remove arenas and be able to pass through existing arenas. (and modify them)
 -   swordsgame.play - Play SwordsGame and list games/arenas
 
 ## Todo:
