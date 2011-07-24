@@ -29,7 +29,7 @@ public class SwordsGameEntityListener extends EntityListener {
 				}
 				if (plugin.players.containsKey(damaged) && plugin.players.containsKey(damager)) {
 					if (plugin.players.get(damaged).arena == plugin.players.get(damager).arena) {
-						if (((Player) damaged).getHealth() - edbeEvent.getDamage() < 0.5) {
+						if (((Player) damaged).getHealth() - edbeEvent.getDamage() < 1) {
 							event.setDamage(0);
 							plugin.games.get(plugin.players.get(damaged).arena).kill((Player) damager, (Player) damaged);
 						}

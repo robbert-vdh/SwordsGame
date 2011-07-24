@@ -59,7 +59,7 @@ public class SwordsGameClass {
 					}, 100); // This will start the game approximately 5 seconds after the second player joins.
 				} else if (playercount >= 2 && isStarted) {
 					playSound("http://dl.dropbox.com/u/677732/Minecraft/quakeplay.wav");
-					rankUp(players[i], false);
+					rankUp(players[i], true);
 				}
 				return true;
 			}
@@ -75,7 +75,7 @@ public class SwordsGameClass {
 				weapon[i] = 0;
 				playercount--;
 				if (playercount < 2) {
-					reset();
+					stop();
 				}
 				if (playercount == 0) {
 					plugin.games.remove(arenaName);
@@ -127,10 +127,8 @@ public class SwordsGameClass {
 
 	public void messagePlayers(String message) {
 		for (int i = 0; i <= 3; i++) {
-			try {
+			if (players[i] != null) {
 				players[i].sendMessage(message);
-			} catch (Exception e) {
-
 			}
 		}
 	}
@@ -148,11 +146,9 @@ public class SwordsGameClass {
 		weaponList.add(new ItemStack(Material.AIR));
 		toSpawnAll();
 		for (int i = 0; i <= 3; i++) {
-			try {
+			if (players[i] != null) {
 				players[i].setHealth(20);
 				rankUp(players[i], false);
-			} catch (Exception e) {
-
 			}
 		}
 		isStarted = true;
@@ -160,7 +156,7 @@ public class SwordsGameClass {
 		messagePlayers(ChatColor.GOLD + "The game has been started, good luck!");
 	}
 
-	public void reset() {
+	public void stop() {
 		isStarted = false;
 		messagePlayers(ChatColor.GOLD + "The game has been aborted because there is only one player left.");
 	}
@@ -180,17 +176,42 @@ public class SwordsGameClass {
 				if (weapon[i] != weaponList.size()) {
 					weapon[i]++;
 					player.getInventory().clear();
+					player.getInventory().addItem(new ItemStack(320, 1)); //Cooked porkchop
 					if (weaponList.get(weapon[i] - 1).getType() != Material.AIR) {
 						player.getInventory().addItem(weaponList.get(weapon[i] - 1));
 					}
-					player.getInventory().addItem(new ItemStack(320, 1)); //Cooked porkchop
-					player.sendMessage(ChatColor.GREEN + "You've been promoted! Rank " + ChatColor.AQUA + weapon[i] + ChatColor.GREEN + " out of " + ChatColor.AQUA + weaponList.size() + ChatColor.GREEN + ".");
+					player.sendMessage(ChatColor.GREEN + "Rank " + ChatColor.AQUA + weapon[i] + ChatColor.GREEN + " out of " + ChatColor.AQUA + weaponList.size() + ChatColor.GREEN + ".");
 				} else {
-					messagePlayers(ChatColor.GOLD + "Derp!");
+					reset(player);
 				}
 				break;
 			}
 		}
+	}
+
+	public void reset(Player winner) {
+		toSpawnAll();
+		for (int i = 0; i <= 3; i++) {
+			if (players[i] != null) {
+				players[i].getInventory().clear();
+				players[i].setHealth(20);
+			}
+		}
+		messagePlayers(ChatColor.AQUA + winner.getDisplayName() + ChatColor.GOLD + " has won the match!");
+		messagePlayers(ChatColor.GOLD + "A new match will start in fifteen seconds.");
+		BukkitScheduler bScheduler = plugin.getServer().getScheduler();
+		bScheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
+			@Override
+			public void run() {
+				start();
+			}
+		}, 300);
+		bScheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
+			@Override
+			public void run() {
+				messagePlayers(ChatColor.GOLD + "Five seconds left!");
+			}
+		}, 200);
 	}
 
 	public void kill(Player killer, Player killed) {
