@@ -1,5 +1,6 @@
-package me.coolblinger.swordsgame;
+package me.coolblinger.swordsgame.listeners;
 
+import me.coolblinger.swordsgame.SwordsGame;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;

@@ -1,5 +1,8 @@
 package me.coolblinger.swordsgame;
 
+import me.coolblinger.swordsgame.classes.SwordsGameArenaClass;
+import me.coolblinger.swordsgame.classes.SwordsGameClass;
+import me.coolblinger.swordsgame.classes.SwordsGameDefine;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;

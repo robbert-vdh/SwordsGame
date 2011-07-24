@@ -25,3 +25,4 @@
 -   The client side BukkitContrib mod is not required, but it will make the experience better, using sounds, notes and several other things.
 -   There's currently a limit of four people per game, but this will be customizable in the future.
 -   Please wall off the arenas yourself, since there is no easy way to prevent people from entering.
+-   Both the killer and the killed player are send to their spawn upon a kill, to prevent camping.

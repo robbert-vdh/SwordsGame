@@ -2,6 +2,13 @@ package me.coolblinger.swordsgame;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import me.coolblinger.swordsgame.classes.SwordsGameArenaClass;
+import me.coolblinger.swordsgame.classes.SwordsGameClass;
+import me.coolblinger.swordsgame.classes.SwordsGameDefine;
+import me.coolblinger.swordsgame.classes.SwordsGamePlayerRestore;
+import me.coolblinger.swordsgame.listeners.SwordsGameBlockListener;
+import me.coolblinger.swordsgame.listeners.SwordsGameEntityListener;
+import me.coolblinger.swordsgame.listeners.SwordsGamePlayerListener;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -21,15 +28,16 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class SwordsGame extends JavaPlugin {
-	Logger log = Logger.getLogger("Minecraft");
-	PermissionHandler permissions;
-	SwordsGamePlayerListener playerListener = new SwordsGamePlayerListener(this);
-	SwordsGameBlockListener blockListener = new SwordsGameBlockListener(this);
+	public Logger log = Logger.getLogger("Minecraft");
+	public PermissionHandler permissions;
+	private SwordsGamePlayerListener playerListener = new SwordsGamePlayerListener(this);
+	private SwordsGameBlockListener blockListener = new SwordsGameBlockListener(this);
+	private SwordsGameEntityListener entityListener = new SwordsGameEntityListener(this);
 	private boolean saving;
-	HashMap<Player, SwordsGamePlayerRestore> players = new HashMap<Player, SwordsGamePlayerRestore>(); // Used for keeping track of who's in which game.
-	HashMap<String, SwordsGameClass> games = new HashMap<String, SwordsGameClass>();
-	HashMap<String, SwordsGameArenaClass> arenas = new HashMap<String, SwordsGameArenaClass>();
-	HashMap<Player, SwordsGameDefine> define = new HashMap<Player, SwordsGameDefine>();
+	public HashMap<Player, SwordsGamePlayerRestore> players = new HashMap<Player, SwordsGamePlayerRestore>(); // Used for keeping track of who's in which game.
+	public HashMap<String, SwordsGameClass> games = new HashMap<String, SwordsGameClass>();
+	public HashMap<String, SwordsGameArenaClass> arenas = new HashMap<String, SwordsGameArenaClass>();
+	public HashMap<Player, SwordsGameDefine> define = new HashMap<Player, SwordsGameDefine>();
 
 	@Override
 	public void onDisable() {
@@ -103,6 +111,7 @@ public class SwordsGame extends JavaPlugin {
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Event.Priority.Normal, this);
+		pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.High, this);
 		pm.registerEvent(Event.Type.BLOCK_PLACE, blockListener, Event.Priority.High, this);
 		log.info(pdFile.getName() + " version " + pdFile.getVersion() + " loaded!");

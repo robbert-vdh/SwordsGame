@@ -1,22 +1,18 @@
-package me.coolblinger.swordsgame;
+package me.coolblinger.swordsgame.classes;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.bukkitcontrib.player.ContribPlayer;
 
-//This file contains the smaller classes
-
-class SwordsGameDefine {
-	Vector corner1;
-	Vector corner2;
-	boolean secondcorner;
-	World world;
-	boolean showedWarning;
-	String mode;
+public class SwordsGameDefine {
+	public Vector corner1;
+	public Vector corner2;
+	private boolean secondcorner;
+	public World world;
+	private boolean showedWarning;
+	public String mode;
 
 	public SwordsGameDefine(String _mode) {
 		mode = _mode;
@@ -48,29 +44,5 @@ class SwordsGameDefine {
 			}
 			return false;
 		}
-	}
-}
-
-class SwordsGamePlayerRestore {
-	Location location;
-	ItemStack[] inventory;
-	Player player;
-	SwordsGame plugin;
-	String arena;
-
-	public SwordsGamePlayerRestore(Player _player, String _arena, SwordsGame _plugin) {
-		player = _player;
-		location = player.getLocation();
-		inventory = player.getInventory().getContents();
-		arena = _arena;
-		plugin = _plugin;
-		player.getInventory().clear();
-	}
-
-	public void restore() {
-		player.getInventory().setContents(inventory);
-		player.teleport(location);
-		plugin.players.remove(player);
-		plugin.games.get(arena).removePlayer(player);
 	}
 }

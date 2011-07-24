@@ -1,24 +1,31 @@
-package me.coolblinger.swordsgame;
+package me.coolblinger.swordsgame.classes;
 
+import me.coolblinger.swordsgame.SwordsGame;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.bukkitcontrib.player.ContribPlayer;
 import org.bukkitcontrib.sound.SimpleSoundManager;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class SwordsGameClass {
-	SwordsGame plugin;
-	Player[] players = new Player[4];
-	int playercount = 0;
-	boolean isStarted = false;
-	Vector[] spawns = new Vector[4];
-	String arenaName;
-	World world;
-	Vector[] arenaCorners = new Vector[2];
+	private SwordsGame plugin;
+	public Player[] players = new Player[4];
+	private int[] weapon = new int[4];
+	private List<ItemStack> weaponList = new ArrayList<ItemStack>();
+	public int playercount = 0;
+	public boolean isStarted = false;
+	public Vector[] spawns = new Vector[4];
+	public String arenaName;
+	public World world;
+	public Vector[] arenaCorners = new Vector[2];
 
 	public SwordsGameClass(Player player, SwordsGameArenaClass arenaClass, SwordsGame swordsGame) {
 		plugin = swordsGame;
@@ -49,9 +56,10 @@ public class SwordsGameClass {
 						public void run() {
 							start();
 						}
-					}, 20); // This will start the game approximately 1 second after the second player joins.
+					}, 100); // This will start the game approximately 5 seconds after the second player joins.
 				} else if (playercount >= 2 && isStarted) {
 					playSound("http://dl.dropbox.com/u/677732/Minecraft/quakeplay.wav");
+					rankUp(players[i], false);
 				}
 				return true;
 			}
@@ -64,6 +72,7 @@ public class SwordsGameClass {
 			if (players[i] == player) {
 				messagePlayers(ChatColor.AQUA + players[i].getDisplayName() + ChatColor.GREEN + " has left the game!");
 				players[i] = null;
+				weapon[i] = 0;
 				playercount--;
 				if (playercount < 2) {
 					reset();
@@ -93,6 +102,7 @@ public class SwordsGameClass {
 				if (message) {
 					player.sendMessage(ChatColor.RED + "You can leave using " + ChatColor.GOLD + "/sg leave" + ChatColor.RED + ".");
 				}
+				break;
 			}
 		}
 	}
@@ -126,7 +136,25 @@ public class SwordsGameClass {
 	}
 
 	public void start() {
+		weapon = new int[4];
+		weaponList.clear();
+		weaponList.add(new ItemStack(Material.DIAMOND_SWORD, 1));
+		weaponList.add(new ItemStack(Material.IRON_SWORD, 1));
+		weaponList.add(new ItemStack(Material.DIAMOND_AXE, 1));
+		weaponList.add(new ItemStack(Material.IRON_AXE, 1));
+		weaponList.add(new ItemStack(Material.GOLD_SWORD, 1));
+		weaponList.add(new ItemStack(Material.GOLD_AXE, 1));
+		weaponList.add(new ItemStack(Material.GOLD_PICKAXE, 1));
+		weaponList.add(new ItemStack(Material.AIR));
 		toSpawnAll();
+		for (int i = 0; i <= 3; i++) {
+			try {
+				players[i].setHealth(20);
+				rankUp(players[i], false);
+			} catch (Exception e) {
+
+			}
+		}
 		isStarted = true;
 		playSound("http://dl.dropbox.com/u/677732/Minecraft/quakeplay.wav");
 		messagePlayers(ChatColor.GOLD + "The game has been started, good luck!");
@@ -144,5 +172,41 @@ public class SwordsGameClass {
 			}
 		}
 		return true;
+	}
+
+	public void rankUp(Player player, boolean notify) {
+		for (int i = 0; i <= 3; i++) {
+			if (players[i] == player) {
+				if (weapon[i] != weaponList.size()) {
+					weapon[i]++;
+					player.getInventory().clear();
+					if (weaponList.get(weapon[i] - 1).getType() != Material.AIR) {
+						player.getInventory().addItem(weaponList.get(weapon[i] - 1));
+					}
+					player.getInventory().addItem(new ItemStack(320, 1)); //Cooked porkchop
+					player.sendMessage(ChatColor.GREEN + "You've been promoted! Rank " + ChatColor.AQUA + weapon[i] + ChatColor.GREEN + " out of " + ChatColor.AQUA + weaponList.size() + ChatColor.GREEN + ".");
+				} else {
+					messagePlayers(ChatColor.GOLD + "Derp!");
+				}
+				break;
+			}
+		}
+	}
+
+	public void kill(Player killer, Player killed) {
+		for (int i = 0; i <= 3; i++) {
+			if (players[i] == killed) {
+				players[i].setHealth(20);
+				toSpawn(players[i], false);
+				break;
+			}
+		}
+		for (int i = 0; i <= 3; i++) {
+			if (players[i] == killer) {
+				toSpawn(players[i], false);
+				rankUp(killer, true);
+				break;
+			}
+		}
 	}
 }

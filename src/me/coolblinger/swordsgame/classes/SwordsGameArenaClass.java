@@ -1,19 +1,19 @@
-package me.coolblinger.swordsgame;
+package me.coolblinger.swordsgame.classes;
 
 import org.bukkit.util.Vector;
 
 import java.io.Serializable;
 
 public class SwordsGameArenaClass implements Serializable {
-	double[] cornerX = new double[2]; // I seem to get an outofbounds exception when using 1.
-	double[] cornerZ = new double[2];
+	public double[] cornerX = new double[2]; // I seem to get an outofbounds exception when using 1.
+	public double[] cornerZ = new double[2];
 
 	double[] spawnX = new double[4]; // Same
 	double[] spawnY = new double[4];
 	double[] spawnZ = new double[4];
 
-	String name;
-	String world; // World has to be a string, or else serialization would be hard.
+	public String name;
+	public String world; // World has to be a string, or else serialization would be hard.
 
 	public SwordsGameArenaClass(String _name, String _world, Vector _corner1, Vector _corner2) {
 		cornerX[0] = _corner1.getX();
