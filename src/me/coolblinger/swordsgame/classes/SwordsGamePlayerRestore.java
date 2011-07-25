@@ -13,6 +13,7 @@ public class SwordsGamePlayerRestore {
 	public Player player;
 	private SwordsGame plugin;
 	public String arena;
+	public boolean noDamage = false; // Used in the entity listener, to prevent weapon spamming.
 
 	public SwordsGamePlayerRestore(Player _player, String _arena, SwordsGame _plugin) {
 		player = _player;

@@ -23,21 +23,22 @@ import org.bukkit.util.Vector;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 public class SwordsGame extends JavaPlugin {
 	public Logger log = Logger.getLogger("Minecraft");
 	public PermissionHandler permissions;
+	public SwordsGameConfiguration config = new SwordsGameConfiguration(this);
 	private SwordsGamePlayerListener playerListener = new SwordsGamePlayerListener(this);
 	private SwordsGameBlockListener blockListener = new SwordsGameBlockListener(this);
 	private SwordsGameEntityListener entityListener = new SwordsGameEntityListener(this);
 	private boolean saving;
-	public HashMap<Player, SwordsGamePlayerRestore> players = new HashMap<Player, SwordsGamePlayerRestore>(); // Used for keeping track of who's in which game.
-	public HashMap<String, SwordsGameClass> games = new HashMap<String, SwordsGameClass>();
-	public HashMap<String, SwordsGameArenaClass> arenas = new HashMap<String, SwordsGameArenaClass>();
-	public HashMap<Player, SwordsGameDefine> define = new HashMap<Player, SwordsGameDefine>();
+	public ConcurrentHashMap<Player, SwordsGamePlayerRestore> players = new ConcurrentHashMap<Player, SwordsGamePlayerRestore>(); // Used for keeping track of who's in which game.
+	public ConcurrentHashMap<String, SwordsGameClass> games = new ConcurrentHashMap<String, SwordsGameClass>();
+	public ConcurrentHashMap<String, SwordsGameArenaClass> arenas = new ConcurrentHashMap<String, SwordsGameArenaClass>();
+	public ConcurrentHashMap<Player, SwordsGameDefine> define = new ConcurrentHashMap<Player, SwordsGameDefine>();
 
 	@Override
 	public void onDisable() {
@@ -56,6 +57,7 @@ public class SwordsGame extends JavaPlugin {
 		}
 		for (SwordsGamePlayerRestore pRestore : players.values()) {
 			pRestore.restore();
+			log.warning(pRestore.player.getDisplayName());
 		}
 		PluginDescriptionFile pdFile = this.getDescription();
 		log.info(pdFile.getName() + " unloaded!");
@@ -100,7 +102,7 @@ public class SwordsGame extends JavaPlugin {
 			try {
 				FileInputStream arenaFileInputStream = new FileInputStream(arenaFile);
 				ObjectInputStream arenaFileObjectInputStream = new ObjectInputStream(arenaFileInputStream);
-				arenas = (HashMap<String, SwordsGameArenaClass>) arenaFileObjectInputStream.readObject();
+				arenas = (ConcurrentHashMap<String, SwordsGameArenaClass>) arenaFileObjectInputStream.readObject();
 				arenaFileObjectInputStream.close();
 				saving = true;
 			} catch (Exception e) {
@@ -110,8 +112,10 @@ public class SwordsGame extends JavaPlugin {
 		}
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Event.Priority.Normal, this);
+		pm.registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, playerListener, Event.Priority.High, this);
 		pm.registerEvent(Event.Type.PLAYER_MOVE, playerListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.ENTITY_DAMAGE, entityListener, Event.Priority.Normal, this);
+		pm.registerEvent(Event.Type.ENTITY_REGAIN_HEALTH, entityListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.High, this);
 		pm.registerEvent(Event.Type.BLOCK_PLACE, blockListener, Event.Priority.High, this);
 		log.info(pdFile.getName() + " version " + pdFile.getVersion() + " loaded!");

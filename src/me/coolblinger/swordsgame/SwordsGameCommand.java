@@ -84,7 +84,7 @@ public class SwordsGameCommand {
 			player.sendMessage(ChatColor.GOLD + "/sg list <#> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Arena list");
 		}
 		if (plugin.permissions.has(player, "swordsgame.play")) {
-			player.sendMessage(ChatColor.GOLD + "/sg game <arena> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Create or join a game in the specified arena");
+			player.sendMessage(ChatColor.GOLD + "/sg game <arena> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Create or join a game in the specified     arena");
 		}
 		if (plugin.permissions.has(player, "swordsgame.play")) {
 			player.sendMessage(ChatColor.GOLD + "/sg leave " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Leave the current game ");

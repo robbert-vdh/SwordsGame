@@ -4,11 +4,11 @@ import me.coolblinger.swordsgame.SwordsGame;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.util.Vector;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class SwordsGamePlayerListener extends PlayerListener {
 	SwordsGame plugin;
@@ -27,6 +27,22 @@ public class SwordsGamePlayerListener extends PlayerListener {
 		Player player = event.getPlayer();
 		if (plugin.getArena(event.getTo().subtract(0.5, 0, 0.5).toVector()) == null && plugin.players.containsKey(player)) {
 			plugin.games.get(plugin.players.get(player).arena).toSpawn(player, false);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+		String[] split = event.getMessage().split(" ");
+		if (plugin.players.containsKey(event.getPlayer())) {
+			List<String> allowedCommands = plugin.config.readList("allowCommands");
+			allowedCommands.add("/sg");
+			allowedCommands.add("/swordsgame");
+			if (containsIgnoreCase(allowedCommands, split[0])) {
+
+			} else {
+				event.getPlayer().sendMessage(ChatColor.RED + "You can't execute this command while in a SwordsGame game.");
+				event.setCancelled(true);
+			}
 		}
 	}
 
@@ -69,5 +85,14 @@ public class SwordsGamePlayerListener extends PlayerListener {
 				}
 			}
 		}
+	}
+
+	public boolean containsIgnoreCase(List<String> list, String string) {
+		Iterator<String> it = list.iterator();
+		while (it.hasNext()) {
+			if (it.next().equalsIgnoreCase(string))
+				return true;
+		}
+		return false;
 	}
 }
