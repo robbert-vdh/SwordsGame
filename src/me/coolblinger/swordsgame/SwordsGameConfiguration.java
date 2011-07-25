@@ -37,7 +37,7 @@ public class SwordsGameConfiguration {
 		}
 
 		Configuration config = config();
-		if (!config.getKeys().contains("allowCommands")) {
+		if (config.getProperty("allowCommands") == null) {
 			List<String> dummyList = new ArrayList<String>();
 			dummyList.add("/time");
 			dummyList.add("/help");
@@ -45,15 +45,15 @@ public class SwordsGameConfiguration {
 			config.setProperty("allowCommands", dummyList);
 			config.save();
 		}
-		if (!config.getKeys().contains("spawnOnKill")) {
+		if (config.getProperty("spawnOnKill") == null) {
 			config.setProperty("spawnOnKill", true);
 			config.save();
 		}
-		if (!config.getKeys("ladder").contains("custom")) {
+		if (config.getProperty("ladder.custom") == null) {
 			config.setProperty("ladder.custom", false);
 			config.save();
 		}
-		if (!config.getKeys("ladder").contains("ladder")) {
+		if (config.getProperty("ladder.ladder") == null) {
 			List<Integer> dummyList = new ArrayList<Integer>();
 			dummyList.add(276);
 			dummyList.add(267);
@@ -66,7 +66,7 @@ public class SwordsGameConfiguration {
 			config.setProperty("ladder.ladder", dummyList);
 			config.save();
 		}
-		if (!config.getKeys("ladder").contains("sideItems")) {
+		if (config.getProperty("ladder.sideItems") == null) {
 			List<Integer> dummyList = new ArrayList<Integer>();
 			dummyList.add(320);
 			config.setProperty("ladder.sideItems", dummyList);

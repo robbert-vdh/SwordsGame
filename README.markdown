@@ -23,5 +23,10 @@
 -   Both the killer and the killed player are send to their spawn upon a kill, to prevent camping. This can be disabled in the config.
 
 ## Changelog:
-1.0:
--   Initial release
+__1.0.1__
+
+> -   Fixed the configuration
+
+__1.0__
+
+> -   Initial release
