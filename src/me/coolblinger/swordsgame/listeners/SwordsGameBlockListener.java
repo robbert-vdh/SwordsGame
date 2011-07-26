@@ -15,7 +15,9 @@ public class SwordsGameBlockListener extends BlockListener {
 
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		if (plugin.getArena(event.getBlock().getLocation().toVector()) != null && !plugin.permissions.has(player, "swordsgame.define")) {
+		if (!plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
+
+		} else if (plugin.getArena(event.getBlock().getLocation().toVector()) != null) {
 			event.setCancelled(true);
 		} else if (plugin.players.containsKey(player)) {
 			event.setCancelled(true);
@@ -24,7 +26,9 @@ public class SwordsGameBlockListener extends BlockListener {
 
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		if (plugin.getArena(event.getBlock().getLocation().toVector()) != null && !plugin.permissions.has(player, "swordsgame.define")) {
+		if (!plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
+
+		} else if (plugin.getArena(event.getBlock().getLocation().toVector()) != null) {
 			event.setCancelled(true);
 		} else if (plugin.players.containsKey(player)) {
 			event.setCancelled(true);

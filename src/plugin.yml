@@ -1,7 +1,7 @@
 name: SwordsGame
 main: me.coolblinger.swordsgame.SwordsGame
 autthor: coolblinger
-version: 1.0.1
+version: 1.0.2
 description: >
   A GunGame like PvP game for Minecraft.
 commands:
@@ -9,3 +9,15 @@ commands:
       description: Main command for SwordsGame
       usage: /<command>
       aliases: swordsgame
+permissions:
+   swordsgame.*:
+      description: Lets people define arenas and play them
+      children:
+         swordsgame.define: true
+         swordsgame.play: true
+   swordsgame.define:
+      description: Define/remove arenas and be able to modify existing arenas
+      default: op
+   swordsgame.play:
+      description: Play SwordsGame and list games/arenas
+      default: true

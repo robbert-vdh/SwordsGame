@@ -83,11 +83,10 @@ public class SwordsGame extends JavaPlugin {
 		// Initialize permissions:
 		Plugin permissionsPlugin = pm.getPlugin("Permissions");
 		if (permissionsPlugin == null) {
-			log.severe("Permissions was not found, " + pdFile.getName() + " will disable itself.");
-			this.setEnabled(false);
-			return;
+			log.severe("Permissions was not found, " + pdFile.getName() + " will use SuperPerms instead.");
+		} else {
+			permissions = ((Permissions) permissionsPlugin).getHandler();
 		}
-		permissions = ((Permissions) permissionsPlugin).getHandler();
 		// Loading arenas
 		File arenaFile = new File("plugins/SwordsGame/arenas.dat");
 		if (!arenaFile.exists() || arenaFile.length() == 0) {

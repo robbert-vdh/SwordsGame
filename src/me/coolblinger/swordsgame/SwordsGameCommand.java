@@ -68,31 +68,31 @@ public class SwordsGameCommand {
 	public void printCommandList(Player player) {
 		player.sendMessage(ChatColor.GOLD + "SwordsGame:");
 		player.sendMessage(ChatColor.GOLD + "-----------");
-		if (plugin.permissions.has(player, "swordsgame.define")) {
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
 			player.sendMessage(ChatColor.GOLD + "/sg define " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Define a new arena");
 		}
-		if (plugin.permissions.has(player, "swordsgame.define")) {
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
 			player.sendMessage(ChatColor.GOLD + "/sg remove <arena> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Remove an arena");
 		}
-		if (plugin.permissions.has(player, "swordsgame.define")) {
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
 			player.sendMessage(ChatColor.GOLD + "/sg setspawns " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Set the spawns for an arena");
 		}
-		if (plugin.permissions.has(player, "swordsgame.define")) {
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
 			player.sendMessage(ChatColor.GOLD + "/sg resetspawns <arena> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Reset the spawns for an arena");
 		}
-		if (plugin.permissions.has(player, "swordsgame.play")) {
+		if (plugin.permissions.has(player, "swordsgame.play") || player.hasPermission("swordsgame.play")) {
 			player.sendMessage(ChatColor.GOLD + "/sg list <#> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Arena list");
 		}
-		if (plugin.permissions.has(player, "swordsgame.play")) {
+		if (plugin.permissions.has(player, "swordsgame.play") || player.hasPermission("swordsgame.play")) {
 			player.sendMessage(ChatColor.GOLD + "/sg game <arena> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Create or join a game in the specified     arena");
 		}
-		if (plugin.permissions.has(player, "swordsgame.play")) {
+		if (plugin.permissions.has(player, "swordsgame.play") || player.hasPermission("swordsgame.play")) {
 			player.sendMessage(ChatColor.GOLD + "/sg leave " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Leave the current game ");
 		}
 	}
 
 	public void define(Player player, String[] args) {
-		if (plugin.permissions.has(player, "swordsgame.define")) {
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
 			ContribPlayer cPlayer = (ContribPlayer) player;
 			if (!plugin.define.containsKey(player)) {
 				plugin.define.put(player, new SwordsGameDefine("define"));
@@ -125,7 +125,7 @@ public class SwordsGameCommand {
 	}
 
 	public void remove(Player player, String[] args) {
-		if (plugin.permissions.has(player, "swordsgame.define")) {
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
 			if (args.length >= 2) {
 				if (plugin.arenas.containsKey(args[1])) {
 					plugin.arenas.remove(args[1]);
@@ -143,7 +143,7 @@ public class SwordsGameCommand {
 
 	public void setSpawns(Player player) {
 		ContribPlayer cPlayer = (ContribPlayer) player;
-		if (plugin.permissions.has(player, "swordsgame.define")) {
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
 			if (!plugin.define.containsKey(player)) {
 				plugin.define.put(player, new SwordsGameDefine("setspawns"));
 				cPlayer.sendNotification("Setting spawns", "Right click", Material.MAP);
@@ -161,7 +161,7 @@ public class SwordsGameCommand {
 	}
 
 	public void resetSpawns(Player player, String[] args) {
-		if (plugin.permissions.has(player, "swordsgame.define")) {
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
 			if (args.length >= 2) {
 				if (plugin.arenas.containsKey(args[1])) {
 					plugin.arenas.get(args[1]).resetSpawns();
@@ -178,7 +178,7 @@ public class SwordsGameCommand {
 	}
 
 	public void list(Player player, String[] args) {
-		if (plugin.permissions.has(player, "swordsgame.play")) {
+		if (plugin.permissions.has(player, "swordsgame.play") || player.hasPermission("swordsgame.play")) {
 			Object[] arenaList = plugin.arenas.keySet().toArray();
 			Arrays.sort(arenaList);
 			int multiplier;
@@ -223,7 +223,7 @@ public class SwordsGameCommand {
 	}
 
 	public void game(Player player, String[] args) {
-		if (plugin.permissions.has(player, "swordsgame.play")) {
+		if (plugin.permissions.has(player, "swordsgame.play") || player.hasPermission("swordsgame.play")) {
 			if (args.length >= 2) {
 				if (plugin.arenas.containsKey(args[1])) {
 					if (plugin.arenas.get(args[1]).isPrepared()) {
@@ -255,7 +255,7 @@ public class SwordsGameCommand {
 	}
 
 	public void leave(Player player) {
-		if (plugin.permissions.has(player, "swordsgame.play")) {
+		if (plugin.permissions.has(player, "swordsgame.play") || player.hasPermission("swordsgame.play")) {
 			if (plugin.players.containsKey(player)) {
 				plugin.players.get(player).restore();
 			} else {
