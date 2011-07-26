@@ -40,7 +40,7 @@ public class SwordsGamePlayerListener extends PlayerListener {
 			if (containsIgnoreCase(allowedCommands, split[0])) {
 
 			} else {
-				event.getPlayer().sendMessage(ChatColor.RED + "You can't execute this command while in a SwordsGame game.");
+				event.getPlayer().sendMessage(ChatColor.RED + plugin.local("errors.command.notAllowedInGame"));
 				event.setCancelled(true);
 			}
 		}
@@ -54,14 +54,14 @@ public class SwordsGamePlayerListener extends PlayerListener {
 					if (event.getClickedBlock() != null) {
 						Vector vector = event.getClickedBlock().getLocation().toVector();
 						if (plugin.define.get(player).setCorner(vector, player.getWorld(), player)) {
-							player.sendMessage(ChatColor.GREEN + "Second corner has been set to " + ChatColor.WHITE + vector.toString() + ChatColor.GREEN + ".");
+							player.sendMessage(ChatColor.GREEN + plugin.local("defining.defining.secondCorner") + ChatColor.WHITE + vector.toString() + ChatColor.GREEN + ".");
 						} else {
-							player.sendMessage(ChatColor.GREEN + "First corner has been set to " + ChatColor.WHITE + vector.toString() + ChatColor.GREEN + ".");
+							player.sendMessage(ChatColor.GREEN + plugin.local("defining.defining.firstCorner") + ChatColor.WHITE + vector.toString() + ChatColor.GREEN + ".");
 						}
 					}
 				} else {
 					plugin.define.remove(player);
-					player.sendMessage(ChatColor.RED + "Defining has been canceled.");
+					player.sendMessage(ChatColor.RED + plugin.local("defining.defining.canceled"));
 				}
 			} else if (plugin.define.get(player).mode == "setspawns") {
 				if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
@@ -71,17 +71,17 @@ public class SwordsGamePlayerListener extends PlayerListener {
 						if (arenaName != null) {
 							int setSpawns = plugin.arenas.get(arenaName).setSpawns(vector);
 							if (setSpawns != 0) {
-								player.sendMessage(ChatColor.GREEN + "Added spawn " + ChatColor.WHITE + setSpawns + ChatColor.GREEN + " out of " + ChatColor.WHITE + "4" + ChatColor.GREEN + " for arena '" + ChatColor.WHITE + arenaName + ChatColor.GREEN + "'.");
+								player.sendMessage(ChatColor.GREEN + plugin.local("defining.settingSpawns.set") + ChatColor.WHITE + setSpawns + ChatColor.GREEN + plugin.local("defining.list.outOf") + ChatColor.WHITE + "4" + ChatColor.GREEN + plugin.local("defining.settingSpawns.for") + "arena '" + ChatColor.WHITE + arenaName + ChatColor.GREEN + "'.");
 							} else {
-								player.sendMessage(ChatColor.RED + "You've already created four spawns.");
+								player.sendMessage(ChatColor.RED + plugin.local("errors.settingSpawns.alreadyFourSpawns"));
 							}
 						} else {
-							player.sendMessage("This is not a valid arena.");
+							player.sendMessage(plugin.local("errors.settingSpawns.inValid"));
 						}
 					}
 				} else {
 					plugin.define.remove(player);
-					player.sendMessage(ChatColor.RED + "Setting spawns has been canceled.");
+					player.sendMessage(ChatColor.RED + plugin.local("defining.settingSpawns.canceled"));
 				}
 			}
 		}

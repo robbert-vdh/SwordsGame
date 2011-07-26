@@ -31,6 +31,8 @@ public class SwordsGame extends JavaPlugin {
 	public Logger log = Logger.getLogger("Minecraft");
 	public PermissionHandler permissions;
 	public SwordsGameConfiguration config = new SwordsGameConfiguration(this);
+	public SwordsGameLocalisation localisationConfig = new SwordsGameLocalisation(this);
+	public ConcurrentHashMap<String, String> localisation = localisationConfig.getLocalisation();
 	private SwordsGamePlayerListener playerListener = new SwordsGamePlayerListener(this);
 	private SwordsGameBlockListener blockListener = new SwordsGameBlockListener(this);
 	private SwordsGameEntityListener entityListener = new SwordsGameEntityListener(this);
@@ -189,5 +191,9 @@ public class SwordsGame extends JavaPlugin {
 		} else {
 			return null;
 		}
+	}
+
+	public String local(String path) { //Get the corrosponding localisation string
+		return localisation.get(path);
 	}
 }

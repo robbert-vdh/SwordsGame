@@ -22,7 +22,7 @@ public class SwordsGameCommand {
 
 	public boolean execute(CommandSender sender, Command command, String commandLabel, String[] args) {
 		if (sender instanceof ConsoleCommandSender) {
-			sender.sendMessage("This command is only executable by players.");
+			sender.sendMessage(plugin.local("errors.consoleCommand"));
 			return true;
 		}
 		Player player = (Player) sender;
@@ -69,25 +69,25 @@ public class SwordsGameCommand {
 		player.sendMessage(ChatColor.GOLD + "SwordsGame:");
 		player.sendMessage(ChatColor.GOLD + "-----------");
 		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
-			player.sendMessage(ChatColor.GOLD + "/sg define " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Define a new arena");
+			player.sendMessage(ChatColor.GOLD + "/sg define " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.define"));
 		}
 		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
-			player.sendMessage(ChatColor.GOLD + "/sg remove <arena> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Remove an arena");
+			player.sendMessage(ChatColor.GOLD + "/sg remove <arena> " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.remove"));
 		}
 		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
-			player.sendMessage(ChatColor.GOLD + "/sg setspawns " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Set the spawns for an arena");
+			player.sendMessage(ChatColor.GOLD + "/sg setspawns " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.setspawns"));
 		}
 		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
-			player.sendMessage(ChatColor.GOLD + "/sg resetspawns <arena> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Reset the spawns for an arena");
+			player.sendMessage(ChatColor.GOLD + "/sg resetspawns <arena> " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.resetspawns"));
 		}
 		if (plugin.permissions.has(player, "swordsgame.play") || player.hasPermission("swordsgame.play")) {
-			player.sendMessage(ChatColor.GOLD + "/sg list <#> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Arena list");
+			player.sendMessage(ChatColor.GOLD + "/sg list <#> " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.list"));
 		}
 		if (plugin.permissions.has(player, "swordsgame.play") || player.hasPermission("swordsgame.play")) {
-			player.sendMessage(ChatColor.GOLD + "/sg game <arena> " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Create or join a game in the specified     arena");
+			player.sendMessage(ChatColor.GOLD + "/sg game <arena> " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.game"));
 		}
 		if (plugin.permissions.has(player, "swordsgame.play") || player.hasPermission("swordsgame.play")) {
-			player.sendMessage(ChatColor.GOLD + "/sg leave " + ChatColor.WHITE + "-" + ChatColor.AQUA + " Leave the current game ");
+			player.sendMessage(ChatColor.GOLD + "/sg leave " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.leave"));
 		}
 	}
 
@@ -96,26 +96,28 @@ public class SwordsGameCommand {
 			ContribPlayer cPlayer = (ContribPlayer) player;
 			if (!plugin.define.containsKey(player)) {
 				plugin.define.put(player, new SwordsGameDefine("define"));
-				cPlayer.sendNotification("Defining", "Right click both corners", Material.MAP);
-				player.sendMessage(ChatColor.GREEN + "Right click at both corners of the arena. You can type          " + ChatColor.GOLD + "/sg define <name>" + ChatColor.GREEN + " when you're done, or left click to cancel.");
+				cPlayer.sendNotification(plugin.local("defining.defining.BukkitContrib.notificationTitle1"), plugin.local("defining.defining.BukkitContrib.notificationText1"), Material.MAP);
+				player.sendMessage(ChatColor.GREEN + plugin.local("defining.defining.text1") + ChatColor.GOLD + "/sg define <name>" + ChatColor.GREEN + plugin.local("defining.defining.text2"));
 			} else {
 				if (plugin.define.get(player).mode == "setspawns") {
-					player.sendMessage(ChatColor.RED + "You can't define arenas while setting spawns.");
+					player.sendMessage(ChatColor.RED + plugin.local("errors.defining.spawnsWhileDefining"));
 				} else {
 					if (plugin.define.get(player).corner1 != null && plugin.define.get(player).corner2 != null && plugin.define.get(player).mode == "define") {
 						if (args.length >= 2) {
 							if (!plugin.arenas.containsKey(args[1])) {
 								plugin.arenas.put(args[1], new SwordsGameArenaClass(args[1], plugin.define.get(player).world.getName(), plugin.define.get(player).corner1, plugin.define.get(player).corner2));
-								player.sendMessage(ChatColor.GREEN + "Arena '" + ChatColor.WHITE + args[1] + ChatColor.GREEN + "' has been created!");
-								player.sendMessage(ChatColor.GREEN + "You should set four spawnpoints now, using " + ChatColor.GOLD + "/sg setspawns" + ChatColor.GREEN + ".");
-								cPlayer.sendNotification("Setting spawnpoints", "/sg setspawns", Material.MAP);
+								player.sendMessage(ChatColor.GREEN + "Arena '" + ChatColor.WHITE + args[1] + ChatColor.GREEN + plugin.local("defining.defining.arenaCreated"));
+								player.sendMessage(ChatColor.GREEN + plugin.local("defining.defining.setSpawns") + ChatColor.GOLD + "/sg setspawns" + ChatColor.GREEN + ".");
+								cPlayer.sendNotification(plugin.local("defining.defining.BukkitContrib.notificationTitle2"), "/sg setspawns", Material.MAP);
 								plugin.define.remove(player);
 							} else {
-								player.sendMessage(ChatColor.RED + "An arena with that name already exists.");
+								player.sendMessage(ChatColor.RED + plugin.local("errors.defining.alreadyExists"));
 							}
 						} else {
-							player.sendMessage(ChatColor.RED + "You need to specify a name for the new arena.");
+							player.sendMessage(ChatColor.RED + plugin.local("errors.defining.noName"));
 						}
+					} else {
+						player.sendMessage(ChatColor.RED + plugin.local("errors.defining.alreadyDefining"));
 					}
 				}
 			}
@@ -129,12 +131,12 @@ public class SwordsGameCommand {
 			if (args.length >= 2) {
 				if (plugin.arenas.containsKey(args[1])) {
 					plugin.arenas.remove(args[1]);
-					player.sendMessage(ChatColor.GREEN + "Arena '" + ChatColor.WHITE + args[1] + ChatColor.GREEN + "' has been removed.");
+					player.sendMessage(ChatColor.GREEN + "Arena '" + ChatColor.WHITE + args[1] + ChatColor.GREEN + plugin.local("defining.removing.success"));
 				} else {
-					player.sendMessage(ChatColor.RED + "Invalid arena name specified.");
+					player.sendMessage(ChatColor.RED + plugin.local("errors.removing.invalidName"));
 				}
 			} else {
-				player.sendMessage(ChatColor.RED + "You need to specify the name of the arena you want to         remove.");
+				player.sendMessage(ChatColor.RED + plugin.local("errors.removing.noName"));
 			}
 		} else {
 			printCommandList(player);
@@ -146,13 +148,13 @@ public class SwordsGameCommand {
 		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
 			if (!plugin.define.containsKey(player)) {
 				plugin.define.put(player, new SwordsGameDefine("setspawns"));
-				cPlayer.sendNotification("Setting spawns", "Right click", Material.MAP);
-				player.sendMessage(ChatColor.GREEN + "Right click inside an arena at the desired location. You can leftclick when you're done.");
+				cPlayer.sendNotification(plugin.local("defining.settingSpawns.BukkitContrib.notificationTitle1"), plugin.local("defining.settingSpawns.BukkitContrib.notificationText1"), Material.MAP);
+				player.sendMessage(ChatColor.GREEN + plugin.local("defining.settingSpawns.help"));
 			} else {
 				if (plugin.define.get(player).mode == "setspawns") {
-					player.sendMessage(ChatColor.RED + "You're already setting spawns.");
+					player.sendMessage(ChatColor.RED + plugin.local("errors.settingSpawns.alreadySettingSpawns"));
 				} else {
-					player.sendMessage(ChatColor.RED + "You can't set spawns while defining arenas.");
+					player.sendMessage(ChatColor.RED + plugin.local("errors.settingSpawns.alreadyDefiningArenas"));
 				}
 			}
 		} else {
@@ -165,12 +167,12 @@ public class SwordsGameCommand {
 			if (args.length >= 2) {
 				if (plugin.arenas.containsKey(args[1])) {
 					plugin.arenas.get(args[1]).resetSpawns();
-					player.sendMessage(ChatColor.GREEN + "Spawns for arena '" + ChatColor.WHITE + args[1] + ChatColor.GREEN + "' have been reset.");
+					player.sendMessage(ChatColor.GREEN + plugin.local("defining.resettingSpawns.success1") + ChatColor.WHITE + args[1] + ChatColor.GREEN + plugin.local("defining.resettingSpawns.success2"));
 				} else {
-					player.sendMessage(ChatColor.RED + "Invalid arena name specified.");
+					player.sendMessage(ChatColor.RED + plugin.local("errors.settingSpawns.invalidName"));
 				}
 			} else {
-				player.sendMessage(ChatColor.RED + "You need to specify the name of an arena.");
+				player.sendMessage(ChatColor.RED + plugin.local("defining.settingSpawns.noName"));
 			}
 		} else {
 			printCommandList(player);
@@ -200,18 +202,18 @@ public class SwordsGameCommand {
 			} else {
 				showingTo = showingFrom + 9;
 			}
-			player.sendMessage(ChatColor.GOLD + "SwordsGame arena list: (showing " + showingFrom + "-" + showingTo + " out of " + arenaList.length + ")");
+			player.sendMessage(ChatColor.GOLD + "SwordsGame arena " + plugin.local("defining.list.arenaList") + showingFrom + "-" + showingTo + plugin.local("defining.list.outOf") + arenaList.length + ")");
 			player.sendMessage(ChatColor.GOLD + "-----------");
 			for (int i = showingFrom - 1; i < showingFrom + 8; i++) {
 				try {
 					if (plugin.arenas.get(arenaList[i]).isPrepared()) {
 						if (plugin.games.containsKey(arenaList[i])) {
-							player.sendMessage(ChatColor.GOLD + "- " + ChatColor.WHITE + arenaList[i] + ChatColor.AQUA + " (" + ChatColor.WHITE + plugin.games.get(arenaList[i]).playercount + ChatColor.AQUA + " out of " + ChatColor.WHITE + "4" + ChatColor.AQUA + " players)");
+							player.sendMessage(ChatColor.GOLD + "- " + ChatColor.WHITE + arenaList[i] + ChatColor.AQUA + " (" + ChatColor.WHITE + plugin.games.get(arenaList[i]).playercount + ChatColor.AQUA + " out of " + ChatColor.WHITE + "4" + ChatColor.AQUA + plugin.local("defining.list.players"));
 						} else {
-							player.sendMessage(ChatColor.GOLD + "- " + ChatColor.WHITE + arenaList[i] + ChatColor.AQUA + " (empty)");
+							player.sendMessage(ChatColor.GOLD + "- " + ChatColor.WHITE + arenaList[i] + ChatColor.AQUA + plugin.local("defining.list.empty"));
 						}
 					} else {
-						player.sendMessage(ChatColor.GOLD + "- " + ChatColor.WHITE + arenaList[i] + ChatColor.AQUA + " (missing spawnpoints)");
+						player.sendMessage(ChatColor.GOLD + "- " + ChatColor.WHITE + arenaList[i] + ChatColor.AQUA + plugin.local("defining.list.missingSpawns"));
 					}
 				} catch (Exception e) {
 					return; // An easier way of checking if the value is null.
@@ -234,20 +236,20 @@ public class SwordsGameCommand {
 								if (!plugin.games.get(args[1]).isFull()) {
 									plugin.games.get(args[1]).addPlayer(player);
 								} else {
-									player.sendMessage(ChatColor.RED + "This game is full.");
+									player.sendMessage(ChatColor.RED + plugin.local("errors.game.full"));
 								}
 							}
 						} else {
-							player.sendMessage(ChatColor.RED + "You're already in a game.");
+							player.sendMessage(ChatColor.RED + plugin.local("errors.game.alreadyInAGame"));
 						}
 					} else {
-						player.sendMessage(ChatColor.RED + "The specified arena is missing spawnpoints.");
+						player.sendMessage(ChatColor.RED + plugin.local("errors.game.missingSpawns"));
 					}
 				} else {
-					player.sendMessage(ChatColor.RED + "Invalid arena name.");
+					player.sendMessage(ChatColor.RED + plugin.local("errors.game.invalidName"));
 				}
 			} else {
-				player.sendMessage(ChatColor.RED + "You need to specify the name of the arena you want to play in.");
+				player.sendMessage(ChatColor.RED + plugin.local("errors.game.noName"));
 			}
 		} else {
 			printCommandList(player);
@@ -259,7 +261,7 @@ public class SwordsGameCommand {
 			if (plugin.players.containsKey(player)) {
 				plugin.players.get(player).restore();
 			} else {
-				player.sendMessage(ChatColor.RED + "You're not in a game.");
+				player.sendMessage(ChatColor.RED + plugin.local("errors.leave.notInAGame"));
 			}
 		} else {
 			printCommandList(player);
