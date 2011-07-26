@@ -1,6 +1,6 @@
 # Tested with RB [_1000_] (http://ci.bukkit.org/job/dev-CraftBukkit/1000/)
 ## Dependencies:
--   Permissions 3
+-   Permissions 3 (or you could use SuperPerms)
 -   BukkitContrib (will be downloaded automatically)
 
 ## Permission nodes:
