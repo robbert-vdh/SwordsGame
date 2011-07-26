@@ -31,7 +31,7 @@ public class SwordsGame extends JavaPlugin {
 	public Logger log = Logger.getLogger("Minecraft");
 	public PermissionHandler permissions;
 	public SwordsGameConfiguration config = new SwordsGameConfiguration(this);
-	public SwordsGameLocalisation localisationConfig = new SwordsGameLocalisation(this);
+	public final SwordsGameLocalisation localisationConfig = new SwordsGameLocalisation(this);
 	public ConcurrentHashMap<String, String> localisation = localisationConfig.getLocalisation();
 	private SwordsGamePlayerListener playerListener = new SwordsGamePlayerListener(this);
 	private SwordsGameBlockListener blockListener = new SwordsGameBlockListener(this);

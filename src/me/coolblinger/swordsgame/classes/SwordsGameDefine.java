@@ -1,5 +1,6 @@
 package me.coolblinger.swordsgame.classes;
 
+import me.coolblinger.swordsgame.SwordsGame;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -13,9 +14,11 @@ public class SwordsGameDefine {
 	public World world;
 	private boolean showedWarning;
 	public String mode;
+	private SwordsGame plugin;
 
-	public SwordsGameDefine(String _mode) {
+	public SwordsGameDefine(String _mode, SwordsGame instance) {
 		mode = _mode;
+		plugin = instance;
 	}
 
 	public boolean setCorner(Vector vector, World _world, Player player) {
@@ -30,7 +33,7 @@ public class SwordsGameDefine {
 			secondcorner = false;
 			if (corner1 != null && corner2 != null && !showedWarning) {
 				ContribPlayer cPlayer = (ContribPlayer) player;
-				cPlayer.sendNotification("Defining", "/sg define <name>", Material.MAP);
+				cPlayer.sendNotification(plugin.local("defining.defining.BukkitContrib.notificationTitle1"), "/sg define <name>", Material.MAP);
 				showedWarning = true;
 			}
 			return true;
@@ -39,7 +42,7 @@ public class SwordsGameDefine {
 			secondcorner = true;
 			if (corner1 != null && corner2 != null && !showedWarning) {
 				ContribPlayer cPlayer = (ContribPlayer) player;
-				cPlayer.sendNotification("Defining", "/sg define <name>", Material.MAP);
+				cPlayer.sendNotification(plugin.local("defining.defining.BukkitContrib.notificationTitle1"), "/sg define <name>", Material.MAP);
 				showedWarning = true;
 			}
 			return false;

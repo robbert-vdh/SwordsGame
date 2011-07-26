@@ -95,7 +95,7 @@ public class SwordsGameCommand {
 		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
 			ContribPlayer cPlayer = (ContribPlayer) player;
 			if (!plugin.define.containsKey(player)) {
-				plugin.define.put(player, new SwordsGameDefine("define"));
+				plugin.define.put(player, new SwordsGameDefine("define", plugin));
 				cPlayer.sendNotification(plugin.local("defining.defining.BukkitContrib.notificationTitle1"), plugin.local("defining.defining.BukkitContrib.notificationText1"), Material.MAP);
 				player.sendMessage(ChatColor.GREEN + plugin.local("defining.defining.text1") + ChatColor.GOLD + "/sg define <name>" + ChatColor.GREEN + plugin.local("defining.defining.text2"));
 			} else {
@@ -147,7 +147,7 @@ public class SwordsGameCommand {
 		ContribPlayer cPlayer = (ContribPlayer) player;
 		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
 			if (!plugin.define.containsKey(player)) {
-				plugin.define.put(player, new SwordsGameDefine("setspawns"));
+				plugin.define.put(player, new SwordsGameDefine("setspawns", plugin));
 				cPlayer.sendNotification(plugin.local("defining.settingSpawns.BukkitContrib.notificationTitle1"), plugin.local("defining.settingSpawns.BukkitContrib.notificationText1"), Material.MAP);
 				player.sendMessage(ChatColor.GREEN + plugin.local("defining.settingSpawns.help"));
 			} else {

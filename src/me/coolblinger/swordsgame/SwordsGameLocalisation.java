@@ -254,5 +254,59 @@ public class SwordsGameLocalisation {
 			config.save();
 		}
 		// End of SwordsGamePlayerListener
+		// SwordsGameClass
+		if (config.getProperty("games.created") == null) {
+			config.setProperty("games.created", "Game successfully created!");
+			config.save();
+		}
+		if (config.getProperty("games.createMessage") == null) {
+			config.setProperty("games.createMessage", "Unfortunaly, there are currently too few people, so you'll     have to wait until someone joins you.");
+			config.save();
+		}
+		if (config.getProperty("games.playerJoined") == null) {
+			config.setProperty("games.playerJoined", " has joined the game!");
+			config.save();
+		}
+		if (config.getProperty("games.playerLeft") == null) {
+			config.setProperty("games.playerLeft", " has left the game!");
+			config.save();
+		}
+		if (config.getProperty("games.leaveCommand") == null) {
+			config.setProperty("games.leaveCommand", "You can leave using ");
+			config.save();
+		}
+		if (config.getProperty("games.started") == null) {
+			config.setProperty("games.started", "The game has been started, good luck!");
+			config.save();
+		}
+		if (config.getProperty("games.aborted") == null) {
+			config.setProperty("games.aborted", "The game has been aborted because there is only one player left.");
+			config.save();
+		}
+		if (config.getProperty("games.rank") == null) {
+			config.setProperty("games.rank", "Rank ");
+			config.save();
+		}
+		if (config.getProperty("games.newMatch.15") == null) {
+			config.setProperty("games.newMatch.15", "A new match will start in fifteen seconds.");
+			config.save();
+		}
+		if (config.getProperty("games.newMatch.5") == null) {
+			config.setProperty("games.newMatch.5", "Five seconds left!");
+			config.save();
+		}
+		if (config.getProperty("games.BukkitContrib.lead") == null) {
+			config.setProperty("games.BukkitContrib.lead", "<LEAD> ");
+			config.save();
+		}
+		if (config.getProperty("games.BukkitContrib.winner") == null) {
+			config.setProperty("games.BukkitContrib.winner", "<WINNER> ");
+			config.save();
+		}
+		if (config.getProperty("games.BukkitContrib.tie") == null) {
+			config.setProperty("games.BukkitContrib.tie", "<TIE> ");
+			config.save();
+		}
+		// End of SwordsGameClass
 	}
 }

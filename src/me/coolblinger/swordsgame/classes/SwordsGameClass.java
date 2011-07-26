@@ -39,8 +39,8 @@ public class SwordsGameClass {
 		for (int i = 0; i <= 3; i++) {
 			spawns[i] = new Vector(arenaClass.spawnX[i], arenaClass.spawnY[i], arenaClass.spawnZ[i]);
 		}
-		player.sendMessage(ChatColor.GREEN + "Game successfully created!");
-		player.sendMessage(ChatColor.RED + "Unfortunaly, there are currently too few people, so you'll     have to wait until someone joins you.");
+		player.sendMessage(ChatColor.GREEN + plugin.local("games.created"));
+		player.sendMessage(ChatColor.RED + plugin.local("games.createMessage"));
 		addPlayer(player);
 	}
 
@@ -51,7 +51,7 @@ public class SwordsGameClass {
 				playercount++;
 				plugin.players.put(player, new SwordsGamePlayerRestore(player, arenaName, plugin));
 				toSpawn(players[i], true);
-				messagePlayers(ChatColor.AQUA + players[i].getDisplayName() + ChatColor.GREEN + " has joined the game!");
+				messagePlayers(ChatColor.AQUA + players[i].getDisplayName() + ChatColor.GREEN + plugin.local("games.playerJoined"));
 				if (!isStarted && playercount >= 2) {
 					BukkitScheduler bScheduler = plugin.getServer().getScheduler();
 					bScheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
@@ -73,7 +73,7 @@ public class SwordsGameClass {
 	public boolean removePlayer(Player player) {
 		for (int i = 0; i <= 3; i++) {
 			if (players[i] == player) {
-				messagePlayers(ChatColor.AQUA + players[i].getDisplayName() + ChatColor.GREEN + " has left the game!");
+				messagePlayers(ChatColor.AQUA + players[i].getDisplayName() + ChatColor.GREEN + plugin.local("games.playerLeft"));
 				aManager.resetGlobalTitle(players[i]);
 				players[i] = null;
 				weapon[i] = 0;
@@ -96,7 +96,7 @@ public class SwordsGameClass {
 				Vector spawnLoc = new Vector(spawns[i].getX() + 0.5, spawns[i].getY(), spawns[i].getZ() + 0.5);
 				players[i].teleport(spawnLoc.toLocation(world));
 				if (message) {
-					player.sendMessage(ChatColor.RED + "You can leave using " + ChatColor.GOLD + "/sg leave" + ChatColor.RED + ".");
+					player.sendMessage(ChatColor.RED + plugin.local("games.leaveCommand") + ChatColor.GOLD + "/sg leave" + ChatColor.RED + ".");
 				}
 				break;
 			}
@@ -158,13 +158,13 @@ public class SwordsGameClass {
 			}
 		}
 		playSound("http://dl.dropbox.com/u/677732/Minecraft/quakeplay.wav");
-		messagePlayers(ChatColor.GOLD + "The game has been started, good luck!");
+		messagePlayers(ChatColor.GOLD + plugin.local("games.started"));
 	}
 
 	public void stop() {
 		isStarted = false;
 		isPlaying = false;
-		messagePlayers(ChatColor.GOLD + "The game has been aborted because there is only one player left.");
+		messagePlayers(ChatColor.GOLD + plugin.local("games.aborted"));
 	}
 
 	public boolean isFull() {
@@ -195,7 +195,7 @@ public class SwordsGameClass {
 						if (weaponList.get(weapon[i] - 1).getType() != Material.AIR) {
 							player.getInventory().addItem(weaponList.get(weapon[i] - 1));
 						}
-						player.sendMessage(ChatColor.GREEN + "Rank " + ChatColor.AQUA + weapon[i] + ChatColor.GREEN + " out of " + ChatColor.AQUA + weaponList.size() + ChatColor.GREEN + ".");
+						player.sendMessage(ChatColor.GREEN + plugin.local("games.rank") + ChatColor.AQUA + weapon[i] + ChatColor.GREEN + plugin.local("defining.list.outOf") + ChatColor.AQUA + weaponList.size() + ChatColor.GREEN + ".");
 					} else {
 						weapon[i]++;
 						reset(player);
@@ -217,7 +217,7 @@ public class SwordsGameClass {
 			}
 		}
 		messagePlayers(ChatColor.AQUA + winner.getDisplayName() + ChatColor.GOLD + " has won the match!");
-		messagePlayers(ChatColor.GOLD + "A new match will start in fifteen seconds.");
+		messagePlayers(ChatColor.GOLD + plugin.local("games.newMatch.15"));
 		BukkitScheduler bScheduler = plugin.getServer().getScheduler();
 		bScheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
 			@Override
@@ -228,7 +228,7 @@ public class SwordsGameClass {
 		bScheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
 			@Override
 			public void run() {
-				messagePlayers(ChatColor.GOLD + "Five seconds left!");
+				messagePlayers(ChatColor.GOLD + plugin.local("games.newMatch.5"));
 			}
 		}, 200);
 	}
@@ -275,9 +275,9 @@ public class SwordsGameClass {
 				aManager.resetGlobalTitle(players[i]);
 				if (leadPlayers.contains(players[i])) {
 					if (isPlaying) {
-						aManager.setGlobalTitle(players[i], ChatColor.GOLD + "<LEAD> " + ChatColor.WHITE + players[i].getDisplayName());
+						aManager.setGlobalTitle(players[i], ChatColor.GOLD + plugin.local("games.BukkitContrib.lead") + ChatColor.WHITE + players[i].getDisplayName());
 					} else {
-						aManager.setGlobalTitle(players[i], ChatColor.GREEN + "<WINNER> " + ChatColor.WHITE + players[i].getDisplayName());
+						aManager.setGlobalTitle(players[i], ChatColor.GREEN + plugin.local("games.BukkitContrib.winner") + ChatColor.WHITE + players[i].getDisplayName());
 					}
 				}
 			}
@@ -288,7 +288,7 @@ public class SwordsGameClass {
 				}
 				aManager.resetGlobalTitle(players[i]);
 				if (leadPlayers.contains(players[i])) {
-					aManager.setGlobalTitle(players[i], ChatColor.AQUA + "<TIE> " + ChatColor.WHITE + players[i].getDisplayName());
+					aManager.setGlobalTitle(players[i], ChatColor.AQUA + plugin.local("games.BukkitContrib.tie") + ChatColor.WHITE + players[i].getDisplayName());
 				}
 			}
 		}
