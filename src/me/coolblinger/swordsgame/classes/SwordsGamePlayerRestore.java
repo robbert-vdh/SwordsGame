@@ -14,6 +14,7 @@ public class SwordsGamePlayerRestore {
 	private SwordsGame plugin;
 	public String arena;
 	public boolean noDamage = false; // Used in the entity listener, to prevent weapon spamming.
+	public boolean noMovement = false; // Used in the player listener, to prevent the PLAYER_MOVE event from getting fired twice.
 
 	public SwordsGamePlayerRestore(Player _player, String _arena, SwordsGame _plugin) {
 		player = _player;

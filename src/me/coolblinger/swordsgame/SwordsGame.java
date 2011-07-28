@@ -2,14 +2,15 @@ package me.coolblinger.swordsgame;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
-import me.coolblinger.swordsgame.classes.SwordsGameArenaClass;
-import me.coolblinger.swordsgame.classes.SwordsGameClass;
-import me.coolblinger.swordsgame.classes.SwordsGameDefine;
-import me.coolblinger.swordsgame.classes.SwordsGamePlayerRestore;
+import me.coolblinger.swordsgame.classes.*;
 import me.coolblinger.swordsgame.listeners.SwordsGameBlockListener;
 import me.coolblinger.swordsgame.listeners.SwordsGameEntityListener;
 import me.coolblinger.swordsgame.listeners.SwordsGamePlayerListener;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -36,31 +37,40 @@ public class SwordsGame extends JavaPlugin {
 	private SwordsGamePlayerListener playerListener = new SwordsGamePlayerListener(this);
 	private SwordsGameBlockListener blockListener = new SwordsGameBlockListener(this);
 	private SwordsGameEntityListener entityListener = new SwordsGameEntityListener(this);
-	private boolean saving;
 	public ConcurrentHashMap<Player, SwordsGamePlayerRestore> players = new ConcurrentHashMap<Player, SwordsGamePlayerRestore>(); // Used for keeping track of who's in which game.
 	public ConcurrentHashMap<String, SwordsGameClass> games = new ConcurrentHashMap<String, SwordsGameClass>();
 	public ConcurrentHashMap<String, SwordsGameArenaClass> arenas = new ConcurrentHashMap<String, SwordsGameArenaClass>();
+	public ConcurrentHashMap<String, SwordsGameLobbyClass> lobbies = new ConcurrentHashMap<String, SwordsGameLobbyClass>();
 	public ConcurrentHashMap<Player, SwordsGameDefine> define = new ConcurrentHashMap<Player, SwordsGameDefine>();
 
 	@Override
 	public void onDisable() {
 		// Saving arenas
 		File arenaFile = new File("plugins" + File.separator + "SwordsGame" + File.separator + "arenas.dat");
-		if (saving) {
-			try {
-				FileOutputStream arenaFileInputStream = new FileOutputStream(arenaFile);
-				ObjectOutputStream arenaFileObjectInputStream = new ObjectOutputStream(arenaFileInputStream);
-				arenaFileObjectInputStream.writeObject(arenas);
-				arenaFileObjectInputStream.flush();
-				arenaFileObjectInputStream.close();
-			} catch (Exception e) {
-				log.severe("'arenas.dat' could not be written to. (is it outdated?)");
-			}
+		try {
+			FileOutputStream arenaFileInputStream = new FileOutputStream(arenaFile);
+			ObjectOutputStream arenaFileObjectInputStream = new ObjectOutputStream(arenaFileInputStream);
+			arenaFileObjectInputStream.writeObject(arenas);
+			arenaFileObjectInputStream.flush();
+			arenaFileObjectInputStream.close();
+		} catch (Exception e) {
+			log.severe("'arenas.dat' could not be written to. (is it outdated?)");
+		}
+		// Saving lobbies
+		File lobbyFile = new File("plugins" + File.separator + "SwordsGame" + File.separator + "lobbies.dat");
+		try {
+			FileOutputStream lobbyFileInputStream = new FileOutputStream(lobbyFile);
+			ObjectOutputStream lobbyFileObjectInputStream = new ObjectOutputStream(lobbyFileInputStream);
+			lobbyFileObjectInputStream.writeObject(lobbies);
+			lobbyFileObjectInputStream.flush();
+			lobbyFileObjectInputStream.close();
+		} catch (Exception e) {
+			log.severe("'lobbies.dat' could not be written to. (is it outdated?)");
 		}
 		for (SwordsGamePlayerRestore pRestore : players.values()) {
 			pRestore.restore();
-			log.warning(pRestore.player.getDisplayName());
 		}
+		updateLobbySigns();
 		PluginDescriptionFile pdFile = this.getDescription();
 		log.info(pdFile.getName() + " unloaded!");
 	}
@@ -94,10 +104,8 @@ public class SwordsGame extends JavaPlugin {
 		if (!arenaFile.exists() || arenaFile.length() == 0) {
 			try {
 				arenaFile.createNewFile();
-				saving = true;
 			} catch (Exception e) {
 				log.severe("'arenas.dat' could not be made. Arena saving is disabled.");
-				saving = false;
 			}
 		} else {
 			try {
@@ -105,10 +113,26 @@ public class SwordsGame extends JavaPlugin {
 				ObjectInputStream arenaFileObjectInputStream = new ObjectInputStream(arenaFileInputStream);
 				arenas = (ConcurrentHashMap<String, SwordsGameArenaClass>) arenaFileObjectInputStream.readObject();
 				arenaFileObjectInputStream.close();
-				saving = true;
 			} catch (Exception e) {
-				log.severe("'arenas.dat' could not be read (is it outdated?), arena loading and saving has been disabled.");
-				saving = false;
+				log.severe("'arenas.dat' could not be read (is it outdated?), arena saving has been disabled.");
+			}
+		}
+		// Loading lobbies
+		File lobbyFile = new File("plugins/SwordsGame/lobbies.dat");
+		if (!lobbyFile.exists() || lobbyFile.length() == 0) {
+			try {
+				lobbyFile.createNewFile();
+			} catch (Exception e) {
+				log.severe("'lobbies.dat' could not be made. Lobby saving is disabled.");
+			}
+		} else {
+			try {
+				FileInputStream lobbyFileInputStream = new FileInputStream(lobbyFile);
+				ObjectInputStream lobbyFileObjectInputStream = new ObjectInputStream(lobbyFileInputStream);
+				lobbies = (ConcurrentHashMap<String, SwordsGameLobbyClass>) lobbyFileObjectInputStream.readObject();
+				lobbyFileObjectInputStream.close();
+			} catch (Exception e) {
+				log.severe("'lobbies.dat' could not be read (is it outdated?), lobby and saving has been disabled.");
 			}
 		}
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);
@@ -184,6 +208,16 @@ public class SwordsGame extends JavaPlugin {
 		return null;
 	}
 
+	public String getLobby(Vector vector) { // An easy way to see which arena a coordinate belongs to.
+		List<SwordsGameLobbyClass> arenaList = new ArrayList<SwordsGameLobbyClass>(lobbies.values());
+		for (SwordsGameLobbyClass lobby : arenaList) {
+			if (clamp(vector.getX(), lobby.cornerX[0], lobby.cornerX[1]) == vector.getX() && clamp(vector.getY(), lobby.cornerY[0], lobby.cornerY[1]) == vector.getY() && clamp(vector.getZ(), lobby.cornerZ[0], lobby.cornerZ[1]) == vector.getZ()) {
+				return lobby.arena;
+			}
+		}
+		return null;
+	}
+
 	public World toWorld(String worldString) {
 		World world = this.getServer().getWorld(worldString);
 		if (world != null) {
@@ -195,5 +229,95 @@ public class SwordsGame extends JavaPlugin {
 
 	public String local(String path) { //Get the corrosponding localisation string
 		return localisation.get(path);
+	}
+
+	public void createLobby(String name, Player player) {
+		lobbies.put(name, new SwordsGameLobbyClass(name, player));
+		String face = lobbies.get(name).face;
+		if (face != null) {
+			SwordsGameLobbyClass lobby = lobbies.get(name);
+			Vector corner1 = new Vector(lobby.cornerX[0], lobby.cornerY[0], lobby.cornerZ[0]);
+			for (double i = 0; i < 3; i++) {
+				for (double n = 0; n < 3; n++) {
+					corner1.toLocation(toWorld(lobby.world)).add(i, 0, -n).getBlock().setType(Material.GLASS);
+				}
+			}
+			Vector port = new Vector(lobby.portX, lobby.portY, lobby.portZ);
+			port.toLocation(toWorld(lobby.world)).subtract(0, 1, 0).getBlock().setType(Material.GLOWSTONE);
+			for (double i = 0; i < 3; i++) {
+				if (lobby.face == "NORTH") {
+					if (i == 0 || i == 1) {
+						port.toLocation(toWorld(lobby.world)).add(0, i, 1).getBlock().setType(Material.STONE);
+						port.toLocation(toWorld(lobby.world)).add(0, i, -1).getBlock().setType(Material.STONE);
+					} else {
+						port.toLocation(toWorld(lobby.world)).add(0, i, 0).getBlock().setType(Material.STONE);
+					}
+				} else if (lobby.face == "SOUTH") {
+					if (i == 0 || i == 1) {
+						port.toLocation(toWorld(lobby.world)).add(0, i, 1).getBlock().setType(Material.STONE);
+						port.toLocation(toWorld(lobby.world)).add(0, i, -1).getBlock().setType(Material.STONE);
+					} else {
+						port.toLocation(toWorld(lobby.world)).add(0, i, 0).getBlock().setType(Material.STONE);
+					}
+				} else if (lobby.face == "WEST") {
+					if (i == 0 || i == 1) {
+						port.toLocation(toWorld(lobby.world)).add(1, i, 0).getBlock().setType(Material.STONE);
+						port.toLocation(toWorld(lobby.world)).add(-1, i, 0).getBlock().setType(Material.STONE);
+					} else {
+						port.toLocation(toWorld(lobby.world)).add(0, i, 0).getBlock().setType(Material.STONE);
+					}
+				} else if (lobby.face == "EAST") {
+					if (i == 0 || i == 1) {
+						port.toLocation(toWorld(lobby.world)).add(1, i, 0).getBlock().setType(Material.STONE);
+						port.toLocation(toWorld(lobby.world)).add(-1, i, 0).getBlock().setType(Material.STONE);
+					} else {
+						port.toLocation(toWorld(lobby.world)).add(0, i, 0).getBlock().setType(Material.STONE);
+					}
+				}
+			}
+			Vector sign = new Vector(lobby.signX, lobby.signY, lobby.signZ);
+			if (lobby.face == "NORTH") {
+				sign.toLocation(toWorld(lobby.world)).getBlock().setTypeIdAndData(68, (byte) 0x5, true);
+			} else if (lobby.face == "SOUTH") {
+				sign.toLocation(toWorld(lobby.world)).getBlock().setTypeIdAndData(68, (byte) 0x4, true);
+			} else if (lobby.face == "WEST") {
+				sign.toLocation(toWorld(lobby.world)).getBlock().setTypeIdAndData(68, (byte) 0x2, true);
+			} else if (lobby.face == "EAST") {
+				sign.toLocation(toWorld(lobby.world)).getBlock().setTypeIdAndData(68, (byte) 0x3, true);
+			}
+			Sign signSign = (Sign) sign.toLocation(toWorld(lobby.world)).getBlock().getState();
+			signSign.setLine(0, ChatColor.DARK_RED + "-SwordsGame-");
+			signSign.setLine(1, lobby.arena);
+			if (games.containsKey(lobby.arena)) {
+				signSign.setLine(3, ChatColor.DARK_GREEN + Integer.toString(games.get(lobby.arena).playercount) + "/4 " + local("lobby.players"));
+			} else {
+				signSign.setLine(3, ChatColor.DARK_GRAY + "0/4 " + local("lobby.players"));
+			}
+			player.sendMessage(ChatColor.GREEN + local("lobby.success"));
+		} else {
+			lobbies.remove(name);
+			player.sendMessage(ChatColor.RED + local("errors.lobby.create.invalidLocation"));
+		}
+	}
+
+	public void removeLobby(String name, Player player) {
+		lobbies.remove(name); // TODO: Remove the lobby itself (and restore the original blocks, if modified)
+		player.sendMessage(ChatColor.GREEN + local("lobby.remove1") + ChatColor.WHITE + name + ChatColor.GREEN + local("lobby.remove2"));
+	}
+
+	public void updateLobbySigns() {
+		for (SwordsGameLobbyClass lobby : lobbies.values()) {
+			Vector sign = new Vector(lobby.signX, lobby.signY, lobby.signZ);
+			BlockState signState = sign.toLocation(toWorld(lobby.world)).getBlock().getState();
+			if (signState instanceof Sign) {
+				Sign signSign = (Sign) signState;
+				if (games.containsKey(lobby.arena)) {
+					signSign.setLine(3, ChatColor.DARK_GREEN + Integer.toString(games.get(lobby.arena).playercount) + "/4 " + local("lobby.players"));
+				} else {
+					signSign.setLine(3, ChatColor.DARK_GRAY + "0/4 " + local("lobby.players"));
+				}
+				signSign.update();
+			}
+		}
 	}
 }

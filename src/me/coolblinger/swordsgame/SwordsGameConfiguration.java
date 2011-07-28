@@ -49,6 +49,10 @@ public class SwordsGameConfiguration {
 			config.setProperty("spawnOnKill", true);
 			config.save();
 		}
+		if (config.getProperty("lobbyOnly") == null) {
+			config.setProperty("lobbyOnly", false);
+			config.save();
+		}
 		if (config.getProperty("ladder.custom") == null) {
 			config.setProperty("ladder.custom", false);
 			config.save();

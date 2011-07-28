@@ -5,10 +5,10 @@ import org.bukkit.util.Vector;
 import java.io.Serializable;
 
 public class SwordsGameArenaClass implements Serializable {
-	public double[] cornerX = new double[2]; // I seem to get an outofbounds exception when using 1.
+	public double[] cornerX = new double[2];
 	public double[] cornerZ = new double[2];
 
-	double[] spawnX = new double[4]; // Same
+	double[] spawnX = new double[4];
 	double[] spawnY = new double[4];
 	double[] spawnZ = new double[4];
 

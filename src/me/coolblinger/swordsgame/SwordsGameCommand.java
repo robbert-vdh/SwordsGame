@@ -38,6 +38,22 @@ public class SwordsGameCommand {
 				} else if (args[0].equalsIgnoreCase("remove")) {
 					remove(player, args);
 					return true;
+				} else if (args[0].equalsIgnoreCase("lobby")) {
+					if (args.length >= 2) {
+						if (args[1].equalsIgnoreCase("create")) {
+							createLobby(player, args);
+							return true;
+						} else if (args[1].equalsIgnoreCase("remove")) {
+							removeLobby(player, args);
+							return true;
+						} else {
+							printCommandList(player);
+							return true;
+						}
+					} else {
+						printCommandList(player);
+						return true;
+					}
 				} else if (args[0].equalsIgnoreCase("setspawns")) {
 					setSpawns(player);
 					return true;
@@ -48,7 +64,11 @@ public class SwordsGameCommand {
 					list(player, args);
 					return true;
 				} else if (args[0].equalsIgnoreCase("game")) {
-					game(player, args);
+					if (!plugin.config.readBoolean("lobbyOnly")) {
+						game(player, args);
+					} else {
+						player.sendMessage(ChatColor.RED + plugin.local("error.lobbyOnly"));
+					}
 					return true;
 				} else if (args[0].equalsIgnoreCase("leave")) {
 					leave(player);
@@ -75,6 +95,12 @@ public class SwordsGameCommand {
 			player.sendMessage(ChatColor.GOLD + "/sg remove <arena> " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.remove"));
 		}
 		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
+			player.sendMessage(ChatColor.GOLD + "/sg lobby create <arena> " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.lobby.create"));
+		}
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
+			player.sendMessage(ChatColor.GOLD + "/sg lobby remove <arena> " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.lobby.remove"));
+		}
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
 			player.sendMessage(ChatColor.GOLD + "/sg setspawns " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.setspawns"));
 		}
 		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
@@ -84,7 +110,9 @@ public class SwordsGameCommand {
 			player.sendMessage(ChatColor.GOLD + "/sg list <#> " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.list"));
 		}
 		if (plugin.permissions.has(player, "swordsgame.play") || player.hasPermission("swordsgame.play")) {
-			player.sendMessage(ChatColor.GOLD + "/sg game <arena> " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.game"));
+			if (!plugin.config.readBoolean("lobbyOnly")) {
+				player.sendMessage(ChatColor.GOLD + "/sg game <arena> " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.game"));
+			}
 		}
 		if (plugin.permissions.has(player, "swordsgame.play") || player.hasPermission("swordsgame.play")) {
 			player.sendMessage(ChatColor.GOLD + "/sg leave " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.leave"));
@@ -131,12 +159,55 @@ public class SwordsGameCommand {
 			if (args.length >= 2) {
 				if (plugin.arenas.containsKey(args[1])) {
 					plugin.arenas.remove(args[1]);
+					if (plugin.lobbies.containsKey(args[1])) {
+						plugin.removeLobby(args[1], player);
+					}
 					player.sendMessage(ChatColor.GREEN + "Arena '" + ChatColor.WHITE + args[1] + ChatColor.GREEN + plugin.local("defining.removing.success"));
 				} else {
 					player.sendMessage(ChatColor.RED + plugin.local("errors.removing.invalidName"));
 				}
 			} else {
 				player.sendMessage(ChatColor.RED + plugin.local("errors.removing.noName"));
+			}
+		} else {
+			printCommandList(player);
+		}
+	}
+
+	public void createLobby(Player player, String[] args) {
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
+			if (args.length >= 3) {
+				if (plugin.arenas.containsKey(args[2])) {
+					if (!plugin.lobbies.containsKey(args[2])) {
+						plugin.createLobby(args[2], player);
+					} else {
+						player.sendMessage(ChatColor.RED + plugin.local("errors.lobby.create.alreadyExists"));
+					}
+				} else {
+					player.sendMessage(ChatColor.RED + plugin.local("errors.lobby.create.invalidName"));
+				}
+			} else {
+				player.sendMessage(ChatColor.RED + plugin.local("errors.lobby.create.noName"));
+			}
+		} else {
+			printCommandList(player);
+		}
+	}
+
+	public void removeLobby(Player player, String[] args) {
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
+			if (args.length >= 3) {
+				if (plugin.arenas.containsKey(args[2])) {
+					if (plugin.lobbies.containsKey(args[2])) {
+						plugin.removeLobby(args[2], player);
+					} else {
+						player.sendMessage(ChatColor.RED + plugin.local("errors.lobby.remove.noLobby"));
+					}
+				} else {
+					player.sendMessage(ChatColor.RED + plugin.local("errors.lobby.remove.invalidName"));
+				}
+			} else {
+				player.sendMessage(ChatColor.RED + plugin.local("errors.lobby.remove.noName"));
 			}
 		} else {
 			printCommandList(player);
@@ -232,9 +303,11 @@ public class SwordsGameCommand {
 						if (!plugin.players.containsKey(player)) {
 							if (!plugin.games.containsKey(args[1])) {
 								plugin.games.put(args[1], new SwordsGameClass(player, plugin.arenas.get(args[1]), plugin));
+								plugin.updateLobbySigns();
 							} else {
 								if (!plugin.games.get(args[1]).isFull()) {
 									plugin.games.get(args[1]).addPlayer(player);
+									plugin.updateLobbySigns();
 								} else {
 									player.sendMessage(ChatColor.RED + plugin.local("errors.game.full"));
 								}
@@ -260,6 +333,7 @@ public class SwordsGameCommand {
 		if (plugin.permissions.has(player, "swordsgame.play") || player.hasPermission("swordsgame.play")) {
 			if (plugin.players.containsKey(player)) {
 				plugin.players.get(player).restore();
+				plugin.updateLobbySigns();
 			} else {
 				player.sendMessage(ChatColor.RED + plugin.local("errors.leave.notInAGame"));
 			}

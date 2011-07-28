@@ -24,6 +24,12 @@
 -   Both the killer and the killed player are send to their spawn upon a kill, to prevent camping. This can be disabled in the config.
 
 ## Changelog:
+__1.2__
+
+> -   Added lobbies
+-   Added lobby-only mode (enableable in the configuration file)
+-   Removed some useless debug information still present
+
 __1.1__
 
 > -   Made the (almost) everything localizable

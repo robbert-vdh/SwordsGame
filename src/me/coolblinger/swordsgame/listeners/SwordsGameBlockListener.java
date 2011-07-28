@@ -15,9 +15,15 @@ public class SwordsGameBlockListener extends BlockListener {
 
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		if (!plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
-
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
+			if (plugin.players.containsKey(player)) {
+				event.setCancelled(true);
+			} else if (plugin.getLobby(event.getBlock().getLocation().toVector()) != null) {
+				event.setCancelled(true);
+			}
 		} else if (plugin.getArena(event.getBlock().getLocation().toVector()) != null) {
+			event.setCancelled(true);
+		} else if (plugin.getLobby(event.getBlock().getLocation().toVector()) != null) {
 			event.setCancelled(true);
 		} else if (plugin.players.containsKey(player)) {
 			event.setCancelled(true);
@@ -26,9 +32,15 @@ public class SwordsGameBlockListener extends BlockListener {
 
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		if (!plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
-
+		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
+			if (plugin.players.containsKey(player)) {
+				event.setCancelled(true);
+			} else if (plugin.getLobby(event.getBlock().getLocation().toVector()) != null) {
+				event.setCancelled(true);
+			}
 		} else if (plugin.getArena(event.getBlock().getLocation().toVector()) != null) {
+			event.setCancelled(true);
+		} else if (plugin.getLobby(event.getBlock().getLocation().toVector()) != null) {
 			event.setCancelled(true);
 		} else if (plugin.players.containsKey(player)) {
 			event.setCancelled(true);

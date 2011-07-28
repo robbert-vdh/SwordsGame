@@ -1,10 +1,13 @@
 package me.coolblinger.swordsgame.listeners;
 
 import me.coolblinger.swordsgame.SwordsGame;
+import me.coolblinger.swordsgame.SwordsGameCommand;
+import me.coolblinger.swordsgame.classes.SwordsGameLobbyClass;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
 import java.util.Iterator;
@@ -24,9 +27,49 @@ public class SwordsGamePlayerListener extends PlayerListener {
 	}
 
 	public void onPlayerMove(PlayerMoveEvent event) {
-		Player player = event.getPlayer();
-		if (plugin.getArena(event.getTo().subtract(0.5, 0, 0.5).toVector()) == null && plugin.players.containsKey(player)) {
-			plugin.games.get(plugin.players.get(player).arena).toSpawn(player, false);
+		if (event.getFrom() != event.getTo()) {
+			Player player = event.getPlayer();
+			if (plugin.players.containsKey(player)) {
+				if (plugin.players.get(player).noMovement) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+			if (plugin.getArena(event.getTo().subtract(0.5, 0, 0.5).toVector()) == null && plugin.players.containsKey(player)) {
+				plugin.games.get(plugin.players.get(player).arena).toSpawn(player, false);
+				plugin.players.get(player).noMovement = true;
+				BukkitScheduler bScheduler = plugin.getServer().getScheduler();
+				final Player finalPlayer = player;
+				bScheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
+					@Override
+					public void run() {
+						plugin.players.get(finalPlayer).noMovement = false;
+					}
+				}, 2);
+			}
+			for (SwordsGameLobbyClass lobby : plugin.lobbies.values()) { // I'm not sure how laggy this will be or how to do this more efficient.
+				Vector vector = new Vector(lobby.portX, lobby.portY, lobby.portZ);
+				if (event.getTo().subtract(0.5, 0, 0.5).getBlock() == vector.toLocation(plugin.toWorld(lobby.world)).subtract(0.5, 0, 0.5).getBlock()) {
+					SwordsGameCommand command = new SwordsGameCommand(plugin);
+					String[] args = new String[2];
+					args[0] = "game";
+					args[1] = lobby.arena;
+					command.game(player, args);
+					Vector teleportBack = new Vector(lobby.cornerX[0] + 1.5, lobby.cornerY[0] + 1, lobby.cornerZ[0] - 0.5);
+					if (plugin.players.containsKey(player)) {
+						plugin.players.get(player).location = teleportBack.toLocation(plugin.toWorld(lobby.world));
+					}
+					plugin.players.get(player).noMovement = true;
+					BukkitScheduler bScheduler = plugin.getServer().getScheduler();
+					final Player finalPlayer = player;
+					bScheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
+						@Override
+						public void run() {
+							plugin.players.get(finalPlayer).noMovement = false;
+						}
+					}, 2);
+				}
+			}
 		}
 	}
 

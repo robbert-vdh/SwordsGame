@@ -49,14 +49,48 @@ public class SwordsGameLocalisation {
 		}
 
 		Configuration config = config();
-		// SwordsGameCommand
 		config.setHeader("#Keep in mind that spaces and other symbols are there for a reason.\n#Just modify the text itself and you should be fine.");
+		// SwordsGame
+		if (config.getProperty("errors.lobby.create.invalidLocation") == null) {
+			config.setProperty("errors.lobby.create.invalidLocation", "You can't place a lobby here.");
+			config.save();
+		}
+		if (config.getProperty("lobby.players") == null) {
+			config.setProperty("lobby.players", "players");
+			config.save();
+		}
+		if (config.getProperty("lobby.success") == null) {
+			config.setProperty("lobby.success", "The lobby has been created.");
+			config.save();
+		}
+		if (config.getProperty("lobby.remove1") == null) {
+			config.setProperty("lobby.remove1", "The lobby for arena '");
+			config.save();
+		}
+		if (config.getProperty("lobby.remove2") == null) {
+			config.setProperty("lobby.remove2", "' has been removed.");
+			config.save();
+		}
+		// End of SwordsGame
+		// SwordsGameCommand
+		if (config.getProperty("error.lobbyOnly") == null) {
+			config.setProperty("error.lobbyOnly", "Lobby-only mode has been enabled on this server.");
+			config.save();
+		}
 		if (config.getProperty("commandDesc.define") == null) {
 			config.setProperty("commandDesc.define", "Define a new arena");
 			config.save();
 		}
 		if (config.getProperty("commandDesc.remove") == null) {
 			config.setProperty("commandDesc.remove", "Remove an arena");
+			config.save();
+		}
+		if (config.getProperty("commandDesc.lobby.create") == null) {
+			config.setProperty("commandDesc.lobby.create", "Create a lobby for an arena at   your current location");
+			config.save();
+		}
+		if (config.getProperty("commandDesc.lobby.remove") == null) {
+			config.setProperty("commandDesc.lobby.remove", "Remove the arena's lobby");
 			config.save();
 		}
 		if (config.getProperty("commandDesc.setspawns") == null) {
@@ -137,6 +171,30 @@ public class SwordsGameLocalisation {
 		}
 		if (config.getProperty("errors.removing.noName") == null) {
 			config.setProperty("errors.removing.noName", "You need to specify the name of the arena you want to         remove.");
+			config.save();
+		}
+		if (config.getProperty("errors.lobby.create.noName") == null) {
+			config.setProperty("errors.lobby.create.noName", "You need to specify the name of the arena you want to         create a lobby for.");
+			config.save();
+		}
+		if (config.getProperty("errors.lobby.create.invalidName") == null) {
+			config.setProperty("errors.lobby.create.invalidName", "Invalid arena name specified.");
+			config.save();
+		}
+		if (config.getProperty("errors.lobby.create.alreadyExists") == null) {
+			config.setProperty("errors.lobby.create.alreadyExists", "A lobby for this arena already exists.");
+			config.save();
+		}
+		if (config.getProperty("errors.lobby.remove.noName") == null) {
+			config.setProperty("errors.lobby.remove.noName", "You need to specify the name of the arena you want to remove.");
+			config.save();
+		}
+		if (config.getProperty("errors.lobby.remove.invalidName") == null) {
+			config.setProperty("errors.lobby.remove.invalidName", "Invalid arena name specified.");
+			config.save();
+		}
+		if (config.getProperty("errors.lobby.remove.noLobby") == null) {
+			config.setProperty("errors.lobby.remove.noLobby", "The specified arena has not got a lobby.");
 			config.save();
 		}
 		if (config.getProperty("defining.settingSpawns.BukkitContrib.notificationTitle1") == null) {
@@ -239,6 +297,10 @@ public class SwordsGameLocalisation {
 		}
 		if (config.getProperty("defining.settingSpawns.set") == null) {
 			config.setProperty("defining.settingSpawns.set", "Added spawn ");
+			config.save();
+		}
+		if (config.getProperty("defining.settingSpawns.for") == null) {
+			config.setProperty("defining.settingSpawns.for", " for ");
 			config.save();
 		}
 		if (config.getProperty("errors.settingSpawns.alreadyFourSpawns") == null) {
