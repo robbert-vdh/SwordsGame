@@ -19,6 +19,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
 import java.io.*;
@@ -143,6 +144,13 @@ public class SwordsGame extends JavaPlugin {
 		pm.registerEvent(Event.Type.ENTITY_REGAIN_HEALTH, entityListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.High, this);
 		pm.registerEvent(Event.Type.BLOCK_PLACE, blockListener, Event.Priority.High, this);
+		updateLobbySigns();
+		// Check for updates
+		try {
+			updateCheck();
+		} catch (Exception e) {
+			log.severe("SwordsGame could not check for updates.");
+		}
 		log.info(pdFile.getName() + " version " + pdFile.getVersion() + " loaded!");
 	}
 
@@ -318,6 +326,26 @@ public class SwordsGame extends JavaPlugin {
 				}
 				signSign.update();
 			}
+		}
+	}
+
+	public void updateCheck() throws IOException {
+		URL url = new URL("http://dl.dropbox.com/u/677732/uploads/SwordsGame.jar");
+		int urlSize = url.openConnection().getContentLength();
+		File pluginFile = new File("plugins" + File.separator + "SwordsGame.jar");
+		if (!pluginFile.exists()) {
+			log.severe("SwordsGame has not been installed correctly");
+			return;
+		}
+		long pluginFileSize = pluginFile.length();
+		if (urlSize != pluginFileSize) {
+			BukkitScheduler bScheduler = this.getServer().getScheduler();
+			bScheduler.scheduleSyncDelayedTask(this, new Runnable() {
+				@Override
+				public void run() {
+					log.warning("There has been an update for SwordsGame.");
+				}
+			}, 600);
 		}
 	}
 }

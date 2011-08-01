@@ -36,7 +36,7 @@ public class SwordsGamePlayerListener extends PlayerListener {
 				}
 			}
 			if (plugin.getArena(event.getTo().subtract(0.5, 0, 0.5).toVector()) == null && plugin.players.containsKey(player)) {
-				plugin.games.get(plugin.players.get(player).arena).toSpawn(player, false);
+				plugin.games.get(plugin.players.get(player).arena).toSpawn(player, true);
 				plugin.players.get(player).noMovement = true;
 				BukkitScheduler bScheduler = plugin.getServer().getScheduler();
 				final Player finalPlayer = player;
