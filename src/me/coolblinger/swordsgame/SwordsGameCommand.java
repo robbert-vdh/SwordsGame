@@ -9,7 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkitcontrib.player.ContribPlayer;
+import org.getspout.spoutapi.player.SpoutPlayer;
 
 import java.util.Arrays;
 
@@ -121,10 +121,10 @@ public class SwordsGameCommand {
 
 	public void define(Player player, String[] args) {
 		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
-			ContribPlayer cPlayer = (ContribPlayer) player;
+			SpoutPlayer sPlayer = (SpoutPlayer) player;
 			if (!plugin.define.containsKey(player)) {
 				plugin.define.put(player, new SwordsGameDefine("define", plugin));
-				cPlayer.sendNotification(plugin.local("defining.defining.BukkitContrib.notificationTitle1"), plugin.local("defining.defining.BukkitContrib.notificationText1"), Material.MAP);
+				sPlayer.sendNotification(plugin.local("defining.defining.BukkitContrib.notificationTitle1"), plugin.local("defining.defining.BukkitContrib.notificationText1"), Material.MAP);
 				player.sendMessage(ChatColor.GREEN + plugin.local("defining.defining.text1") + ChatColor.GOLD + "/sg define <name>" + ChatColor.GREEN + plugin.local("defining.defining.text2"));
 			} else {
 				if (plugin.define.get(player).mode == "setspawns") {
@@ -136,7 +136,7 @@ public class SwordsGameCommand {
 								plugin.arenas.put(args[1], new SwordsGameArenaClass(args[1], plugin.define.get(player).world.getName(), plugin.define.get(player).corner1, plugin.define.get(player).corner2));
 								player.sendMessage(ChatColor.GREEN + "Arena '" + ChatColor.WHITE + args[1] + ChatColor.GREEN + plugin.local("defining.defining.arenaCreated"));
 								player.sendMessage(ChatColor.GREEN + plugin.local("defining.defining.setSpawns") + ChatColor.GOLD + "/sg setspawns" + ChatColor.GREEN + ".");
-								cPlayer.sendNotification(plugin.local("defining.defining.BukkitContrib.notificationTitle2"), "/sg setspawns", Material.MAP);
+								sPlayer.sendNotification(plugin.local("defining.defining.BukkitContrib.notificationTitle2"), "/sg setspawns", Material.MAP);
 								plugin.define.remove(player);
 							} else {
 								player.sendMessage(ChatColor.RED + plugin.local("errors.defining.alreadyExists"));
@@ -215,11 +215,11 @@ public class SwordsGameCommand {
 	}
 
 	public void setSpawns(Player player) {
-		ContribPlayer cPlayer = (ContribPlayer) player;
+		SpoutPlayer sPlayer = (SpoutPlayer) player;
 		if (plugin.permissions.has(player, "swordsgame.define") || player.hasPermission("swordsgame.define")) {
 			if (!plugin.define.containsKey(player)) {
 				plugin.define.put(player, new SwordsGameDefine("setspawns", plugin));
-				cPlayer.sendNotification(plugin.local("defining.settingSpawns.BukkitContrib.notificationTitle1"), plugin.local("defining.settingSpawns.BukkitContrib.notificationText1"), Material.MAP);
+				sPlayer.sendNotification(plugin.local("defining.settingSpawns.BukkitContrib.notificationTitle1"), plugin.local("defining.settingSpawns.BukkitContrib.notificationText1"), Material.MAP);
 				player.sendMessage(ChatColor.GREEN + plugin.local("defining.settingSpawns.help"));
 			} else {
 				if (plugin.define.get(player).mode == "setspawns") {

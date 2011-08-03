@@ -8,9 +8,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
-import org.bukkitcontrib.player.ContribPlayer;
-import org.bukkitcontrib.player.SimpleAppearanceManager;
-import org.bukkitcontrib.sound.SimpleSoundManager;
+import org.getspout.spout.player.SimpleAppearanceManager;
+import org.getspout.spout.sound.SimpleSoundManager;
+import org.getspout.spoutapi.player.SpoutPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,9 +114,8 @@ public class SwordsGameClass {
 	public void playSound(String url) {
 		for (int i = 0; i <= 3; i++) {
 			if (players[i] != null) {
-				ContribPlayer cPlayer = (ContribPlayer) players[i];
-				sManager.playCustomSoundEffect(plugin, cPlayer, url, true);
-				SimpleAppearanceManager aManager = new SimpleAppearanceManager();
+				SpoutPlayer sPlayer = (SpoutPlayer) players[i];
+				sManager.playCustomSoundEffect(plugin, sPlayer, url, true);
 			}
 		}
 	}

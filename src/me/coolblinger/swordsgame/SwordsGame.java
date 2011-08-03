@@ -83,14 +83,14 @@ public class SwordsGame extends JavaPlugin {
 		SwordsGameDirectory.mkdir();
 		PluginDescriptionFile pdFile = this.getDescription();
 		PluginManager pm = getServer().getPluginManager();
-		// Autodownloading BukkitContrib
-		if (pm.getPlugin("BukkitContrib") == null) {
+		// Autodownloading Spout
+		if (pm.getPlugin("Spout") == null) {
 			try {
-				downloadBukkitContrib();
-				pm.loadPlugin(new File("plugins" + File.separator + "BukkitContrib.jar"));
-				pm.enablePlugin(pm.getPlugin("BukkitContrib"));
+				downloadSpout();
+				pm.loadPlugin(new File("plugins" + File.separator + "Spout.jar"));
+				pm.enablePlugin(pm.getPlugin("Spout"));
 			} catch (Exception e) {
-				log.warning("Failed to install BukkitContrib, you may have to restart your server or install it manually.");
+				log.warning("Failed to install Spout, you may have to restart your server or install it manually.");
 			}
 		}
 		// Initialize permissions:
@@ -159,9 +159,9 @@ public class SwordsGame extends JavaPlugin {
 		return cmd.execute(sender, command, commandLabel, args);
 	}
 
-	public void downloadBukkitContrib() throws IOException {
-		File file = new File("plugins" + File.separator + "BukkitContrib.jar");
-		URL url = new URL("http://dl.dropbox.com/u/49805/BukkitContrib.jar");
+	public void downloadSpout() throws IOException {
+		File file = new File("plugins" + File.separator + "Spout.jar");
+		URL url = new URL("http://dl.dropbox.com/u/49805/Spout.jar");
 		if (!file.getParentFile().exists())
 			file.getParentFile().mkdir();
 		if (file.exists())
