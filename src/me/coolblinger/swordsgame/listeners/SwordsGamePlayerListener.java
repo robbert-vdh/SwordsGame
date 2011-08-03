@@ -23,6 +23,7 @@ public class SwordsGamePlayerListener extends PlayerListener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		if (plugin.players.containsKey(event.getPlayer())) {
 			plugin.players.get(event.getPlayer()).restore();
+			plugin.updateLobbySigns();
 		}
 	}
 
