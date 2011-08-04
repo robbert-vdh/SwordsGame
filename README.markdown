@@ -25,7 +25,7 @@
 
 ## Changelog:
 
-__1.2.1__
+__1.2.2__
 
 > -   Fixed SuperPerms support
 
