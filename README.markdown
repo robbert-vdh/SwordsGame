@@ -25,7 +25,11 @@
 
 ## Changelog:
 
-__1.2__
+__1.2.1__
+
+> -   Fixed SuperPerms support
+
+__1.2.1__
 
 > -   Migrated from BukkitContrib to Spout
 -   Added an update check

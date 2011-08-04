@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 public class SwordsGame extends JavaPlugin {
 	public Logger log = Logger.getLogger("Minecraft");
+	public boolean permissions3;
 	public PermissionHandler permissions;
 	public SwordsGameConfiguration config = new SwordsGameConfiguration(this);
 	public final SwordsGameLocalisation localisationConfig = new SwordsGameLocalisation(this);
@@ -96,9 +97,11 @@ public class SwordsGame extends JavaPlugin {
 		// Initialize permissions:
 		Plugin permissionsPlugin = pm.getPlugin("Permissions");
 		if (permissionsPlugin == null) {
-			log.severe("Permissions was not found, " + pdFile.getName() + " will use SuperPerms instead.");
+			log.severe("Permissions3 was not found, " + pdFile.getName() + " will use SuperPerms instead.");
+			permissions3 = false;
 		} else {
 			permissions = ((Permissions) permissionsPlugin).getHandler();
+			permissions3 = true;
 		}
 		// Loading arenas
 		File arenaFile = new File("plugins/SwordsGame/arenas.dat");
@@ -346,6 +349,22 @@ public class SwordsGame extends JavaPlugin {
 					log.warning("There has been an update for SwordsGame.");
 				}
 			}, 600);
+		}
+	}
+
+	public boolean hasPermissions(Player player, String permission) {
+		if (permissions3) {
+			if (permissions.has(player, permission)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			if (player.hasPermission(permission)) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 }

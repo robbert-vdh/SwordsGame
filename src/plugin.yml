@@ -1,7 +1,7 @@
 name: SwordsGame
 main: me.coolblinger.swordsgame.SwordsGame
 autthor: coolblinger
-version: 1.2.1
+version: 1.2.2
 description: >
   A GunGame like PvP game for Minecraft.
 commands:
