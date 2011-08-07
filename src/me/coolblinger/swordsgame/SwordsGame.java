@@ -77,7 +77,7 @@ public class SwordsGame extends JavaPlugin {
 		log.info(pdFile.getName() + " unloaded!");
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "ResultOfMethodCallIgnored"})
 	@Override
 	public void onEnable() {
 		File SwordsGameDirectory = new File("plugins" + File.separator + "SwordsGame");
@@ -118,7 +118,13 @@ public class SwordsGame extends JavaPlugin {
 				arenas = (ConcurrentHashMap<String, SwordsGameArenaClass>) arenaFileObjectInputStream.readObject();
 				arenaFileObjectInputStream.close();
 			} catch (Exception e) {
-				log.severe("'arenas.dat' could not be read (is it outdated?), arena saving has been disabled.");
+				log.severe("'arenas.dat' could not be read (was it outdated?) and has been deleted.");
+				try {
+					arenaFile.delete();
+					arenaFile.createNewFile();
+				} catch (Exception ignored) {
+					e.printStackTrace();
+				}
 			}
 		}
 		// Loading lobbies
@@ -136,7 +142,13 @@ public class SwordsGame extends JavaPlugin {
 				lobbies = (ConcurrentHashMap<String, SwordsGameLobbyClass>) lobbyFileObjectInputStream.readObject();
 				lobbyFileObjectInputStream.close();
 			} catch (Exception e) {
-				log.severe("'lobbies.dat' could not be read (is it outdated?), lobby and saving has been disabled.");
+				log.severe("'lobbies.dat' could not be read (was it outdated?) and has been deleted.");
+				try {
+					lobbyFile.delete();
+					lobbyFile.createNewFile();
+				} catch (Exception ignored) {
+					e.printStackTrace();
+				}
 			}
 		}
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Event.Priority.Normal, this);

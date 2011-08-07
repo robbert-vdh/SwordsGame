@@ -25,6 +25,10 @@
 
 ## Changelog:
 
+__1.2.3__
+
+> -   Corrupt files should now automatically be deleted and recreated (there is no point in keeping them)
+
 __1.2.2__
 
 > -   Fixed SuperPerms support
