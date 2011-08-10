@@ -60,6 +60,22 @@ public class SwordsGameEntityListener extends EntityListener {
 						event.setCancelled(true);
 					}
 				}
+			} else if (edbeEvent.getEntity() instanceof HumanEntity) {
+				Entity damaged = edbeEvent.getEntity();
+				if (plugin.players.containsKey((Player) damaged)) {
+					if (((Player) damaged).getHealth() - edbeEvent.getDamage() < 1) {
+						plugin.games.get(plugin.players.get((Player) damaged).arena).downRank((Player) damaged);
+						event.setCancelled(true);
+					}
+				}
+			}
+		} else if (event.getEntity() instanceof HumanEntity) {
+			Entity damaged = event.getEntity();
+			if (plugin.players.containsKey((Player) damaged)) {
+				if (((Player) damaged).getHealth() - event.getDamage() < 1) {
+					plugin.games.get(plugin.players.get((Player) damaged).arena).downRank((Player) damaged);
+					event.setCancelled(true);
+				}
 			}
 		}
 	}

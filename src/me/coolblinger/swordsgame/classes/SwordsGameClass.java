@@ -264,6 +264,40 @@ public class SwordsGameClass {
 		}
 	}
 
+	public void downRank(Player player) {
+		for (int i = 0; i < 3; i++) {
+			if (players[i] == player) {
+				if (weapon[i] > 1 && isPlaying) {
+					weapon[i]--;
+					player.getInventory().clear();
+					if (plugin.config.readBoolean("ladder.custom")) {
+						List<Integer> idList = plugin.config.readList("ladder.sideItems");
+						for (int id : idList) {
+							players[i].getInventory().addItem(new ItemStack(id, 1));
+						}
+					} else {
+						players[i].getInventory().addItem(new ItemStack(320, 1)); //Cooked porkchop
+					}
+					if (weaponList.get(weapon[i] - 1).getType() != Material.AIR) {
+						players[i].getInventory().addItem(weaponList.get(weapon[i] - 1));
+					}
+					players[i].sendMessage(ChatColor.GREEN + plugin.local("games.downRank") + ChatColor.AQUA + weapon[i] + ChatColor.GREEN + plugin.local("defining.list.outOf") + ChatColor.AQUA + weaponList.size() + ChatColor.GREEN + ".");
+					leadTitles();
+				}
+				players[i].setHealth(20);
+				toSpawn(players[i], false);
+				final Player finalPlayer = players[i];
+				BukkitScheduler bScheduler = plugin.getServer().getScheduler();
+				bScheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {
+					@Override
+					public void run() {
+						finalPlayer.setFireTicks(0);
+					}
+				}, 2); // It won't work properly if not delayed.
+			}
+		}
+	}
+
 	public void leadTitles() {
 		List<Player> leadPlayers = getLead();
 		if (leadPlayers.size() == 1) {

@@ -159,6 +159,7 @@ public class SwordsGame extends JavaPlugin {
 		pm.registerEvent(Event.Type.ENTITY_REGAIN_HEALTH, entityListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.High, this);
 		pm.registerEvent(Event.Type.BLOCK_PLACE, blockListener, Event.Priority.High, this);
+		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.High, this);
 		updateLobbySigns();
 		// Check for updates
 		try {

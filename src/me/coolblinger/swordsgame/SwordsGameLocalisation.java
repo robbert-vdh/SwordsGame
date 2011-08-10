@@ -349,6 +349,10 @@ public class SwordsGameLocalisation {
 			config.setProperty("games.rank", "Rank ");
 			config.save();
 		}
+		if (config.getProperty("games.downRank") == null) {
+			config.setProperty("games.downRank", "You've been demoted to rank ");
+			config.save();
+		}
 		if (config.getProperty("games.newMatch.15") == null) {
 			config.setProperty("games.newMatch.15", "A new match will start in fifteen seconds.");
 			config.save();
