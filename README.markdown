@@ -25,6 +25,10 @@
 
 ## Changelog:
 
+__1.2.5__
+
+> -   You can no longer punch out fires when playing
+
 __1.2.4__
 
 > -   People will stay in the arena when killed by non-players (and be demoted if possible)

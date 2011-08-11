@@ -4,6 +4,9 @@ import me.coolblinger.swordsgame.SwordsGame;
 import me.coolblinger.swordsgame.SwordsGameCommand;
 import me.coolblinger.swordsgame.classes.SwordsGameLobbyClass;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
@@ -92,6 +95,29 @@ public class SwordsGamePlayerListener extends PlayerListener {
 
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
+		if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+			Block block = event.getClickedBlock().getRelative(event.getBlockFace());
+			if (block.getType() == Material.FIRE && event.getBlockFace() == BlockFace.UP) {
+				if (plugin.hasPermissions(player, "swordsgame.define")) {
+					if (plugin.players.containsKey(player)) {
+						event.setCancelled(true);
+						return;
+					} else if (plugin.getLobby(event.getClickedBlock().getLocation().toVector()) != null) {
+						event.setCancelled(true);
+						return;
+					}
+				} else if (plugin.getArena(event.getClickedBlock().getLocation().toVector()) != null) {
+					event.setCancelled(true);
+					return;
+				} else if (plugin.getLobby(event.getClickedBlock().getLocation().toVector()) != null) {
+					event.setCancelled(true);
+					return;
+				} else if (plugin.players.containsKey(player)) {
+					event.setCancelled(true);
+					return;
+				}
+			}
+		}
 		if (plugin.define.containsKey(player)) {
 			if (plugin.define.get(player).mode == "define") {
 				if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
