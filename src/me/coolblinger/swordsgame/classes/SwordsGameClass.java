@@ -8,17 +8,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
-import org.getspout.spout.player.SimpleAppearanceManager;
-import org.getspout.spout.sound.SimpleSoundManager;
+import org.getspout.spoutapi.SpoutManager;
+import org.getspout.spoutapi.player.AppearanceManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
+import org.getspout.spoutapi.sound.SoundManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SwordsGameClass {
 	private SwordsGame plugin;
-	private SimpleAppearanceManager aManager = new SimpleAppearanceManager();
-	SimpleSoundManager sManager = new SimpleSoundManager();
+	private AppearanceManager aManager = SpoutManager.getAppearanceManager();
+	SoundManager sManager = SpoutManager.getSoundManager();
 	public Player[] players = new Player[4];
 	private int[] weapon = new int[4];
 	private List<ItemStack> weaponList = new ArrayList<ItemStack>();
@@ -61,7 +62,7 @@ public class SwordsGameClass {
 						}
 					}, 100); // This will start the game approximately 5 seconds after the second player joins.
 				} else if (playercount >= 2 && isStarted) {
-					playSound("http://dl.dropbox.com/u/677732/Minecraft/quakeplay.wav");
+					sManager.playCustomSoundEffect(plugin, (SpoutPlayer) players[i], "http://dl.dropbox.com/u/677732/Minecraft/quakeplay.wav", true);
 					rankUp(players[i], true);
 				}
 				return true;
@@ -132,8 +133,8 @@ public class SwordsGameClass {
 	public void start() {
 		weapon = new int[4];
 		weaponList.clear();
-		if (plugin.config.readBoolean("ladder.custom")) {
-			List<Integer> idList = plugin.config.readList("ladder.ladder");
+		if (plugin.configBoolean("ladder.custom")) {
+			List<Integer> idList = plugin.configList("ladder.ladder");
 			for (int id : idList) {
 				weaponList.add(new ItemStack(id, 1));
 			}
@@ -183,8 +184,8 @@ public class SwordsGameClass {
 					if (weapon[i] != weaponList.size()) {
 						weapon[i]++;
 						player.getInventory().clear();
-						if (plugin.config.readBoolean("ladder.custom")) {
-							List<Integer> idList = plugin.config.readList("ladder.sideItems");
+						if (plugin.configBoolean("ladder.custom")) {
+							List<Integer> idList = plugin.configList("ladder.sideItems");
 							for (int id : idList) {
 								player.getInventory().addItem(new ItemStack(id, 1));
 							}
@@ -237,8 +238,8 @@ public class SwordsGameClass {
 		for (int i = 0; i <= 3; i++) {
 			if (players[i] == killed) {
 				players[i].setHealth(20);
-				if (plugin.config.readBoolean("ladder.custom")) {
-					List<Integer> idList = plugin.config.readList("ladder.sideItems");
+				if (plugin.configBoolean("ladder.custom")) {
+					List<Integer> idList = plugin.configList("ladder.sideItems");
 					for (int id : idList) {
 						if (!players[i].getInventory().contains(id)) {
 							players[i].getInventory().addItem(new ItemStack(id, 1));
@@ -255,7 +256,7 @@ public class SwordsGameClass {
 		}
 		for (int i = 0; i <= 3; i++) {
 			if (players[i] == killer) {
-				if (plugin.config.readBoolean("spawnOnKill")) {
+				if (plugin.configBoolean("spawnOnKill")) {
 					toSpawn(players[i], false);
 				}
 				rankUp(killer, true);
@@ -270,8 +271,8 @@ public class SwordsGameClass {
 				if (weapon[i] > 1 && isPlaying) {
 					weapon[i]--;
 					player.getInventory().clear();
-					if (plugin.config.readBoolean("ladder.custom")) {
-						List<Integer> idList = plugin.config.readList("ladder.sideItems");
+					if (plugin.configBoolean("ladder.custom")) {
+						List<Integer> idList = plugin.configList("ladder.sideItems");
 						for (int id : idList) {
 							players[i].getInventory().addItem(new ItemStack(id, 1));
 						}

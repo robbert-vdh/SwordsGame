@@ -81,7 +81,7 @@ public class SwordsGamePlayerListener extends PlayerListener {
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		String[] split = event.getMessage().split(" ");
 		if (plugin.players.containsKey(event.getPlayer())) {
-			List<String> allowedCommands = plugin.config.readList("allowCommands");
+			List<String> allowedCommands = plugin.configList("allowCommands");
 			allowedCommands.add("/sg");
 			allowedCommands.add("/swordsgame");
 			if (containsIgnoreCase(allowedCommands, split[0])) {

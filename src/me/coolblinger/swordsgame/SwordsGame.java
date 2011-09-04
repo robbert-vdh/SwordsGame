@@ -33,7 +33,6 @@ public class SwordsGame extends JavaPlugin {
 	public Logger log = Logger.getLogger("Minecraft");
 	public boolean permissions3;
 	public PermissionHandler permissions;
-	public SwordsGameConfiguration config = new SwordsGameConfiguration(this);
 	public final SwordsGameLocalisation localisationConfig = new SwordsGameLocalisation(this);
 	public ConcurrentHashMap<String, String> localisation = localisationConfig.getLocalisation();
 	private SwordsGamePlayerListener playerListener = new SwordsGamePlayerListener(this);
@@ -363,6 +362,61 @@ public class SwordsGame extends JavaPlugin {
 				}
 			}, 600);
 		}
+	}
+
+	private void initConfig() {
+		org.bukkit.util.config.Configuration config = getConfiguration();
+		config.load();
+		if (config.getProperty("allowCommands") == null) {
+			List<String> dummyList = new ArrayList<String>();
+			dummyList.add("/time");
+			dummyList.add("/help");
+			config.setProperty("allowCommands", dummyList);
+			config.save();
+		}
+		if (config.getProperty("spawnOnKill") == null) {
+			config.setProperty("spawnOnKill", true);
+			config.save();
+		}
+		if (config.getProperty("lobbyOnly") == null) {
+			config.setProperty("lobbyOnly", false);
+			config.save();
+		}
+		if (config.getProperty("ladder.custom") == null) {
+			config.setProperty("ladder.custom", false);
+			config.save();
+		}
+		if (config.getProperty("ladder.ladder") == null) {
+			List<Integer> dummyList = new ArrayList<Integer>();
+			dummyList.add(276);
+			dummyList.add(267);
+			dummyList.add(279);
+			dummyList.add(258);
+			dummyList.add(283);
+			dummyList.add(286);
+			dummyList.add(285);
+			dummyList.add(0);
+			config.setProperty("ladder.ladder", dummyList);
+			config.save();
+		}
+		if (config.getProperty("ladder.sideItems") == null) {
+			List<Integer> dummyList = new ArrayList<Integer>();
+			dummyList.add(320);
+			config.setProperty("ladder.sideItems", dummyList);
+			config.save();
+		}
+	}
+
+	public List configList(String path) {
+		org.bukkit.util.config.Configuration config = getConfiguration();
+		config.load();
+		return config.getList(path);
+	}
+
+	public boolean configBoolean(String path) {
+		org.bukkit.util.config.Configuration config = getConfiguration();
+		config.load();
+		return config.getBoolean(path, false);
 	}
 
 	public boolean hasPermissions(Player player, String permission) {

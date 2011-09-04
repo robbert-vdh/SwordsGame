@@ -64,7 +64,7 @@ public class SwordsGameCommand {
 					list(player, args);
 					return true;
 				} else if (args[0].equalsIgnoreCase("game")) {
-					if (!plugin.config.readBoolean("lobbyOnly")) {
+					if (!plugin.configBoolean("lobbyOnly")) {
 						game(player, args);
 					} else {
 						player.sendMessage(ChatColor.RED + plugin.local("error.lobbyOnly"));
@@ -110,7 +110,7 @@ public class SwordsGameCommand {
 			player.sendMessage(ChatColor.GOLD + "/sg list <#> " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.list"));
 		}
 		if (plugin.hasPermissions(player, "swordsgame.play")) {
-			if (!plugin.config.readBoolean("lobbyOnly")) {
+			if (!plugin.configBoolean("lobbyOnly")) {
 				player.sendMessage(ChatColor.GOLD + "/sg game <arena> " + ChatColor.WHITE + "- " + ChatColor.AQUA + plugin.local("commandDesc.game"));
 			}
 		}
