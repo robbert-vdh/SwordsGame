@@ -85,13 +85,9 @@ public class SwordsGame extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		// Autodownloading Spout
 		if (pm.getPlugin("Spout") == null) {
-			try {
-				downloadSpout();
-				pm.loadPlugin(new File("plugins" + File.separator + "Spout.jar"));
-				pm.enablePlugin(pm.getPlugin("Spout"));
-			} catch (Exception e) {
-				log.warning("Failed to install Spout, you may have to restart your server or install it manually.");
-			}
+			log.severe("Spout was not found, SwordsGame will disable itself.");
+			setEnabled(false);
+			return;
 		}
 		// Initialize permissions:
 		Plugin permissionsPlugin = pm.getPlugin("Permissions");
@@ -172,34 +168,6 @@ public class SwordsGame extends JavaPlugin {
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 		SwordsGameCommand cmd = new SwordsGameCommand(this);
 		return cmd.execute(sender, command, commandLabel, args);
-	}
-
-	public void downloadSpout() throws IOException {
-		File file = new File("plugins" + File.separator + "Spout.jar");
-		URL url = new URL("http://dl.dropbox.com/u/49805/Spout.jar");
-		if (!file.getParentFile().exists())
-			file.getParentFile().mkdir();
-		if (file.exists())
-			file.delete();
-		file.createNewFile();
-		final int size = url.openConnection().getContentLength();
-		log.info("Downloading " + file.getName() + " (" + size / 1024 + "kb) ...");
-		final InputStream in = url.openStream();
-		final OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-		final byte[] buffer = new byte[1024];
-		int len, downloaded = 0, msgs = 0;
-		final long start = System.currentTimeMillis();
-		while ((len = in.read(buffer)) >= 0) {
-			out.write(buffer, 0, len);
-			downloaded += len;
-			if ((int) ((System.currentTimeMillis() - start) / 500) > msgs) {
-				log.info((int) ((double) downloaded / (double) size * 100d) + "%");
-				msgs++;
-			}
-		}
-		in.close();
-		out.close();
-		log.info("Download finished");
 	}
 
 	public Double clamp(Double value, Double compare1, Double compare2) {
@@ -311,10 +279,11 @@ public class SwordsGame extends JavaPlugin {
 			Sign signSign = (Sign) sign.toLocation(toWorld(lobby.world)).getBlock().getState();
 			signSign.setLine(0, ChatColor.DARK_RED + "-SwordsGame-");
 			signSign.setLine(1, lobby.arena);
+			int maxPlayers = arenas.get(lobby.arena).spawnCount;
 			if (games.containsKey(lobby.arena)) {
-				signSign.setLine(3, ChatColor.DARK_GREEN + Integer.toString(games.get(lobby.arena).playercount) + "/4 " + local("lobby.players"));
+				signSign.setLine(3, ChatColor.DARK_GREEN + Integer.toString(games.get(lobby.arena).playercount) + "/" + maxPlayers + " " + local("lobby.players"));
 			} else {
-				signSign.setLine(3, ChatColor.DARK_GRAY + "0/4 " + local("lobby.players"));
+				signSign.setLine(3, ChatColor.DARK_GRAY + "0/" + maxPlayers + " " + local("lobby.players"));
 			}
 			player.sendMessage(ChatColor.GREEN + local("lobby.success"));
 		} else {
@@ -334,10 +303,11 @@ public class SwordsGame extends JavaPlugin {
 			BlockState signState = sign.toLocation(toWorld(lobby.world)).getBlock().getState();
 			if (signState instanceof Sign) {
 				Sign signSign = (Sign) signState;
+				int maxPlayers = arenas.get(lobby.arena).spawnCount;
 				if (games.containsKey(lobby.arena)) {
-					signSign.setLine(3, ChatColor.DARK_GREEN + Integer.toString(games.get(lobby.arena).playercount) + "/4 " + local("lobby.players"));
+					signSign.setLine(3, ChatColor.DARK_GREEN + Integer.toString(games.get(lobby.arena).playercount) + "/" + maxPlayers + " " + local("lobby.players"));
 				} else {
-					signSign.setLine(3, ChatColor.DARK_GRAY + "0/4 " + local("lobby.players"));
+					signSign.setLine(3, ChatColor.DARK_GRAY + "0/" + maxPlayers + " " + local("lobby.players"));
 				}
 				signSign.update();
 			}

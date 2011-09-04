@@ -7,7 +7,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
@@ -21,7 +20,7 @@ public class SwordsGameCommand {
 	}
 
 	public boolean execute(CommandSender sender, Command command, String commandLabel, String[] args) {
-		if (sender instanceof ConsoleCommandSender) {
+		if (!(sender instanceof Player)) {
 			sender.sendMessage(plugin.local("errors.consoleCommand"));
 			return true;
 		}
@@ -277,14 +276,11 @@ public class SwordsGameCommand {
 			player.sendMessage(ChatColor.GOLD + "-----------");
 			for (int i = showingFrom - 1; i < showingFrom + 8; i++) {
 				try {
-					if (plugin.arenas.get(arenaList[i]).isPrepared()) {
-						if (plugin.games.containsKey(arenaList[i])) {
-							player.sendMessage(ChatColor.GOLD + "- " + ChatColor.WHITE + arenaList[i] + ChatColor.AQUA + " (" + ChatColor.WHITE + plugin.games.get(arenaList[i]).playercount + ChatColor.AQUA + " out of " + ChatColor.WHITE + "4" + ChatColor.AQUA + plugin.local("defining.list.players"));
-						} else {
-							player.sendMessage(ChatColor.GOLD + "- " + ChatColor.WHITE + arenaList[i] + ChatColor.AQUA + plugin.local("defining.list.empty"));
-						}
+					int maxPlayers = plugin.arenas.get(arenaList[i]).spawnCount;
+					if (plugin.games.containsKey(arenaList[i])) {
+						player.sendMessage(ChatColor.GOLD + "- " + ChatColor.WHITE + arenaList[i] + ChatColor.AQUA + " (" + ChatColor.WHITE + plugin.games.get(arenaList[i]).playercount + ChatColor.AQUA + " out of " + ChatColor.WHITE + maxPlayers + ChatColor.AQUA + plugin.local("defining.list.players"));
 					} else {
-						player.sendMessage(ChatColor.GOLD + "- " + ChatColor.WHITE + arenaList[i] + ChatColor.AQUA + plugin.local("defining.list.missingSpawns"));
+						player.sendMessage(ChatColor.GOLD + "- " + ChatColor.WHITE + arenaList[i] + ChatColor.AQUA + " (" + ChatColor.WHITE + 0 + ChatColor.AQUA + " out of " + ChatColor.WHITE + maxPlayers + ChatColor.AQUA + plugin.local("defining.list.players"));
 					}
 				} catch (Exception e) {
 					return; // An easier way of checking if the value is null.
@@ -299,24 +295,20 @@ public class SwordsGameCommand {
 		if (plugin.hasPermissions(player, "swordsgame.play")) {
 			if (args.length >= 2) {
 				if (plugin.arenas.containsKey(args[1])) {
-					if (plugin.arenas.get(args[1]).isPrepared()) {
-						if (!plugin.players.containsKey(player)) {
-							if (!plugin.games.containsKey(args[1])) {
-								plugin.games.put(args[1], new SwordsGameClass(player, plugin.arenas.get(args[1]), plugin));
+					if (!plugin.players.containsKey(player)) {
+						if (!plugin.games.containsKey(args[1])) {
+							plugin.games.put(args[1], new SwordsGameClass(player, plugin.arenas.get(args[1]), plugin));
+							plugin.updateLobbySigns();
+						} else {
+							if (!plugin.games.get(args[1]).isFull()) {
+								plugin.games.get(args[1]).addPlayer(player);
 								plugin.updateLobbySigns();
 							} else {
-								if (!plugin.games.get(args[1]).isFull()) {
-									plugin.games.get(args[1]).addPlayer(player);
-									plugin.updateLobbySigns();
-								} else {
-									player.sendMessage(ChatColor.RED + plugin.local("errors.game.full"));
-								}
+								player.sendMessage(ChatColor.RED + plugin.local("errors.game.full"));
 							}
-						} else {
-							player.sendMessage(ChatColor.RED + plugin.local("errors.game.alreadyInAGame"));
 						}
 					} else {
-						player.sendMessage(ChatColor.RED + plugin.local("errors.game.missingSpawns"));
+						player.sendMessage(ChatColor.RED + plugin.local("errors.game.alreadyInAGame"));
 					}
 				} else {
 					player.sendMessage(ChatColor.RED + plugin.local("errors.game.invalidName"));

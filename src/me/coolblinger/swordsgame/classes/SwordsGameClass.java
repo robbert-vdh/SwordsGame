@@ -19,14 +19,15 @@ import java.util.List;
 public class SwordsGameClass {
 	private SwordsGame plugin;
 	private AppearanceManager aManager = SpoutManager.getAppearanceManager();
-	SoundManager sManager = SpoutManager.getSoundManager();
-	public Player[] players = new Player[4];
-	private int[] weapon = new int[4];
+	private SoundManager sManager = SpoutManager.getSoundManager();
+	public int maxPlayers;
+	public Player[] players;
+	public int[] weapon;
 	private List<ItemStack> weaponList = new ArrayList<ItemStack>();
 	public int playercount = 0;
 	public boolean isStarted = false;
 	public boolean isPlaying = false;
-	public Vector[] spawns = new Vector[4];
+	public Vector[] spawns;
 	public String arenaName;
 	public World world;
 	public Vector[] arenaCorners = new Vector[2];
@@ -37,7 +38,11 @@ public class SwordsGameClass {
 		world = plugin.toWorld(arenaClass.world);
 		arenaCorners[0] = new Vector(arenaClass.cornerX[0], 0, arenaClass.cornerZ[0]);
 		arenaCorners[1] = new Vector(arenaClass.cornerX[1], 128, arenaClass.cornerZ[1]);
-		for (int i = 0; i <= 3; i++) {
+		maxPlayers = plugin.arenas.get(arenaName).spawnCount;
+		players = new Player[maxPlayers];
+		weapon = new int[maxPlayers];
+		spawns = new Vector[maxPlayers];
+		for (int i = 0; i < maxPlayers; i++) {
 			spawns[i] = new Vector(arenaClass.spawnX[i], arenaClass.spawnY[i], arenaClass.spawnZ[i]);
 		}
 		player.sendMessage(ChatColor.GREEN + plugin.local("games.created"));
@@ -46,7 +51,7 @@ public class SwordsGameClass {
 	}
 
 	public boolean addPlayer(Player player) {
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] == null) {
 				players[i] = player;
 				playercount++;
@@ -72,7 +77,7 @@ public class SwordsGameClass {
 	}
 
 	public boolean removePlayer(Player player) {
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] == player) {
 				messagePlayers(ChatColor.AQUA + players[i].getDisplayName() + ChatColor.GREEN + plugin.local("games.playerLeft"));
 				aManager.resetGlobalTitle(players[i]);
@@ -92,7 +97,7 @@ public class SwordsGameClass {
 	}
 
 	public void toSpawn(Player player, boolean message) {
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] == player) {
 				Vector spawnLoc = new Vector(spawns[i].getX() + 0.5, spawns[i].getY(), spawns[i].getZ() + 0.5);
 				players[i].teleport(spawnLoc.toLocation(world));
@@ -105,7 +110,7 @@ public class SwordsGameClass {
 	}
 
 	public void toSpawnAll() {
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] != null) {
 				toSpawn(players[i], false);
 			}
@@ -113,7 +118,7 @@ public class SwordsGameClass {
 	}
 
 	public void playSound(String url) {
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] != null) {
 				SpoutPlayer sPlayer = (SpoutPlayer) players[i];
 				sManager.playCustomSoundEffect(plugin, sPlayer, url, true);
@@ -122,7 +127,7 @@ public class SwordsGameClass {
 	}
 
 	public void messagePlayers(String message) {
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] != null) {
 				players[i].sendMessage(message);
 			}
@@ -151,7 +156,7 @@ public class SwordsGameClass {
 		toSpawnAll();
 		isStarted = true;
 		isPlaying = true;
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] != null) {
 				players[i].setHealth(20);
 				rankUp(players[i], false);
@@ -168,7 +173,7 @@ public class SwordsGameClass {
 	}
 
 	public boolean isFull() {
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] == null) {
 				return false;
 			}
@@ -179,7 +184,7 @@ public class SwordsGameClass {
 	@SuppressWarnings("unchecked")
 	public void rankUp(Player player, boolean notify) {
 		if (isPlaying) {
-			for (int i = 0; i <= 3; i++) {
+			for (int i = 0; i < maxPlayers; i++) {
 				if (players[i] == player) {
 					if (weapon[i] != weaponList.size()) {
 						weapon[i]++;
@@ -210,7 +215,7 @@ public class SwordsGameClass {
 	public void reset(Player winner) {
 		isPlaying = false;
 		toSpawnAll();
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] != null) {
 				players[i].getInventory().clear();
 				players[i].setHealth(20);
@@ -235,7 +240,7 @@ public class SwordsGameClass {
 
 	@SuppressWarnings("unchecked")
 	public void kill(Player killer, Player killed) {
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] == killed) {
 				players[i].setHealth(20);
 				if (plugin.configBoolean("ladder.custom")) {
@@ -254,7 +259,7 @@ public class SwordsGameClass {
 				break;
 			}
 		}
-		for (int i = 0; i <= 3; i++) {
+		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] == killer) {
 				if (plugin.configBoolean("spawnOnKill")) {
 					toSpawn(players[i], false);
@@ -266,7 +271,7 @@ public class SwordsGameClass {
 	}
 
 	public void downRank(Player player) {
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] == player) {
 				if (weapon[i] > 1 && isPlaying) {
 					weapon[i]--;
@@ -302,7 +307,7 @@ public class SwordsGameClass {
 	public void leadTitles() {
 		List<Player> leadPlayers = getLead();
 		if (leadPlayers.size() == 1) {
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < maxPlayers; i++) {
 				if (players[i] == null) {
 					continue;
 				}
@@ -316,7 +321,7 @@ public class SwordsGameClass {
 				}
 			}
 		} else if (leadPlayers.size() > 1) {
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < maxPlayers; i++) {
 				if (players[i] == null) {
 					continue;
 				}

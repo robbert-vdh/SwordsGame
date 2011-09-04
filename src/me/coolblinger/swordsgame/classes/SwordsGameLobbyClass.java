@@ -23,6 +23,10 @@ public class SwordsGameLobbyClass implements Serializable {
 	public String arena;
 	public String world; // World has to be a string, or else serialization would be hard.
 
+	public SwordsGameLobbyClass() {
+		//Dummy
+	}
+
 	public SwordsGameLobbyClass(String _arena, Player player) {
 		cornerX[0] = player.getLocation().getBlock().getLocation().toVector().subtract(new Vector(1, 0, 0)).getX();
 		cornerY[0] = player.getLocation().getBlock().getLocation().toVector().getY();

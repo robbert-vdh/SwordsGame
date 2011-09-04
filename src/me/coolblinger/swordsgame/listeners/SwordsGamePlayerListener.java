@@ -141,9 +141,9 @@ public class SwordsGamePlayerListener extends PlayerListener {
 						if (arenaName != null) {
 							int setSpawns = plugin.arenas.get(arenaName).setSpawns(vector);
 							if (setSpawns != 0) {
-								player.sendMessage(ChatColor.GREEN + plugin.local("defining.settingSpawns.set") + ChatColor.WHITE + setSpawns + ChatColor.GREEN + plugin.local("defining.list.outOf") + ChatColor.WHITE + "4" + ChatColor.GREEN + plugin.local("defining.settingSpawns.for") + "arena '" + ChatColor.WHITE + arenaName + ChatColor.GREEN + "'.");
+								player.sendMessage(ChatColor.GREEN + plugin.local("defining.settingSpawns.set") + ChatColor.WHITE + setSpawns + ChatColor.GREEN + ChatColor.GREEN + plugin.local("defining.settingSpawns.for") + "arena '" + ChatColor.WHITE + arenaName + ChatColor.GREEN + "'.");
 							} else {
-								player.sendMessage(ChatColor.RED + plugin.local("errors.settingSpawns.alreadyFourSpawns"));
+								player.sendMessage(ChatColor.RED + "The arena already has 20 spawns.");
 							}
 						} else {
 							player.sendMessage(plugin.local("errors.settingSpawns.inValid"));

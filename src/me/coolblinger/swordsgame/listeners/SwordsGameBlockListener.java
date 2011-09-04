@@ -15,7 +15,6 @@ public class SwordsGameBlockListener extends BlockListener {
 
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		plugin.log.info(event.getBlock().getType().name());
 		if (plugin.hasPermissions(player, "swordsgame.define")) {
 			if (plugin.players.containsKey(player)) {
 				event.setCancelled(true);
