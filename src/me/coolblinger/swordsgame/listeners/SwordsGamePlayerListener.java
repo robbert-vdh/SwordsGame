@@ -13,11 +13,10 @@ import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class SwordsGamePlayerListener extends PlayerListener {
-	SwordsGame plugin;
+	private final SwordsGame plugin;
 
 	public SwordsGamePlayerListener(SwordsGame instance) {
 		plugin = instance;
@@ -119,7 +118,7 @@ public class SwordsGamePlayerListener extends PlayerListener {
 			}
 		}
 		if (plugin.define.containsKey(player)) {
-			if (plugin.define.get(player).mode == "define") {
+			if (plugin.define.get(player).mode.equals("define")) {
 				if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					if (event.getClickedBlock() != null) {
 						Vector vector = event.getClickedBlock().getLocation().toVector();
@@ -133,7 +132,7 @@ public class SwordsGamePlayerListener extends PlayerListener {
 					plugin.define.remove(player);
 					player.sendMessage(ChatColor.RED + plugin.local("defining.defining.canceled"));
 				}
-			} else if (plugin.define.get(player).mode == "setspawns") {
+			} else if (plugin.define.get(player).mode.equals("setspawns")) {
 				if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					if (event.getClickedBlock() != null) {
 						Vector vector = event.getClickedBlock().getLocation().toVector();
@@ -157,10 +156,9 @@ public class SwordsGamePlayerListener extends PlayerListener {
 		}
 	}
 
-	public boolean containsIgnoreCase(List<String> list, String string) {
-		Iterator<String> it = list.iterator();
-		while (it.hasNext()) {
-			if (it.next().equalsIgnoreCase(string))
+	boolean containsIgnoreCase(List<String> list, String string) {
+		for (String aList : list) {
+			if (aList.equalsIgnoreCase(string))
 				return true;
 		}
 		return false;

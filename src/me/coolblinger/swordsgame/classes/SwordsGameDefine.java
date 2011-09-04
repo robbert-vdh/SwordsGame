@@ -13,8 +13,8 @@ public class SwordsGameDefine {
 	private boolean secondcorner;
 	public World world;
 	private boolean showedWarning;
-	public String mode;
-	private SwordsGame plugin;
+	public final String mode;
+	private final SwordsGame plugin;
 
 	public SwordsGameDefine(String _mode, SwordsGame instance) {
 		mode = _mode;

@@ -11,7 +11,7 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class SwordsGameEntityListener extends EntityListener {
-	private SwordsGame plugin;
+	private final SwordsGame plugin;
 
 	public SwordsGameEntityListener(SwordsGame instance) {
 		plugin = instance;
@@ -32,15 +32,15 @@ public class SwordsGameEntityListener extends EntityListener {
 			if (edbeEvent.getEntity() instanceof HumanEntity && edbeEvent.getDamager() instanceof HumanEntity) {
 				Entity damaged = edbeEvent.getEntity();
 				Entity damager = edbeEvent.getDamager();
-				if (plugin.players.containsKey((Player) damaged) && !plugin.players.containsKey((Player) damager)) {
+				if (plugin.players.containsKey(damaged) && !plugin.players.containsKey(damager)) {
 					event.setCancelled(true);
 				}
-				if (plugin.players.containsKey((Player) damaged) && !plugin.players.containsKey((Player) damager)) {
+				if (plugin.players.containsKey(damaged) && !plugin.players.containsKey(damager)) {
 					event.setCancelled(true);
 				}
 				if (plugin.players.containsKey(damaged) && plugin.players.containsKey(damager)) {
 					if (!plugin.players.get(damager).noDamage) { // This is to prevent attack spamming, since there is no delay in PvP combat
-						if (plugin.players.get(damaged).arena == plugin.players.get(damager).arena) {
+						if (plugin.players.get(damaged).arena.equals(plugin.players.get(damager).arena)) {
 							if (((Player) damaged).getHealth() - edbeEvent.getDamage() < 1) {
 								event.setDamage(0);
 								plugin.games.get(plugin.players.get(damaged).arena).kill((Player) damager, (Player) damaged);
@@ -62,18 +62,18 @@ public class SwordsGameEntityListener extends EntityListener {
 				}
 			} else if (edbeEvent.getEntity() instanceof HumanEntity) {
 				Entity damaged = edbeEvent.getEntity();
-				if (plugin.players.containsKey((Player) damaged)) {
+				if (plugin.players.containsKey(damaged)) {
 					if (((Player) damaged).getHealth() - edbeEvent.getDamage() < 1) {
-						plugin.games.get(plugin.players.get((Player) damaged).arena).downRank((Player) damaged);
+						plugin.games.get(plugin.players.get(damaged).arena).downRank((Player) damaged);
 						event.setCancelled(true);
 					}
 				}
 			}
 		} else if (event.getEntity() instanceof HumanEntity) {
 			Entity damaged = event.getEntity();
-			if (plugin.players.containsKey((Player) damaged)) {
+			if (plugin.players.containsKey(damaged)) {
 				if (((Player) damaged).getHealth() - event.getDamage() < 1) {
-					plugin.games.get(plugin.players.get((Player) damaged).arena).downRank((Player) damaged);
+					plugin.games.get(plugin.players.get(damaged).arena).downRank((Player) damaged);
 					event.setCancelled(true);
 				}
 			}

@@ -7,7 +7,7 @@ import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 public class SwordsGameBlockListener extends BlockListener {
-	SwordsGame plugin;
+	private final SwordsGame plugin;
 
 	public SwordsGameBlockListener(SwordsGame instance) {
 		plugin = instance;

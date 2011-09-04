@@ -6,9 +6,9 @@ import org.bukkit.util.Vector;
 import java.io.Serializable;
 
 public class SwordsGameLobbyClass implements Serializable {
-	public double[] cornerX = new double[2];
-	public double[] cornerY = new double[2];
-	public double[] cornerZ = new double[2];
+	public final double[] cornerX = new double[2];
+	public final double[] cornerY = new double[2];
+	public final double[] cornerZ = new double[2];
 
 	public double portX;
 	public double portY;
@@ -22,10 +22,6 @@ public class SwordsGameLobbyClass implements Serializable {
 
 	public String arena;
 	public String world; // World has to be a string, or else serialization would be hard.
-
-	public SwordsGameLobbyClass() {
-		//Dummy
-	}
 
 	public SwordsGameLobbyClass(String _arena, Player player) {
 		cornerX[0] = player.getLocation().getBlock().getLocation().toVector().subtract(new Vector(1, 0, 0)).getX();

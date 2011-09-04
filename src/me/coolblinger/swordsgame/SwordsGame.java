@@ -30,19 +30,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 public class SwordsGame extends JavaPlugin {
-	public Logger log = Logger.getLogger("Minecraft");
-	public boolean permissions3;
-	public PermissionHandler permissions;
-	public final SwordsGameLocalisation localisationConfig = new SwordsGameLocalisation(this);
-	public ConcurrentHashMap<String, String> localisation = localisationConfig.getLocalisation();
-	private SwordsGamePlayerListener playerListener = new SwordsGamePlayerListener(this);
-	private SwordsGameBlockListener blockListener = new SwordsGameBlockListener(this);
-	private SwordsGameEntityListener entityListener = new SwordsGameEntityListener(this);
-	public ConcurrentHashMap<Player, SwordsGamePlayerRestore> players = new ConcurrentHashMap<Player, SwordsGamePlayerRestore>(); // Used for keeping track of who's in which game.
-	public ConcurrentHashMap<String, SwordsGameClass> games = new ConcurrentHashMap<String, SwordsGameClass>();
+	private final Logger log = Logger.getLogger("Minecraft");
+	private boolean permissions3;
+	private PermissionHandler permissions;
+	private final SwordsGameLocalisation localisationConfig = new SwordsGameLocalisation();
+	private final ConcurrentHashMap<String, String> localisation = localisationConfig.getLocalisation();
+	private final SwordsGamePlayerListener playerListener = new SwordsGamePlayerListener(this);
+	private final SwordsGameBlockListener blockListener = new SwordsGameBlockListener(this);
+	private final SwordsGameEntityListener entityListener = new SwordsGameEntityListener(this);
+	public final ConcurrentHashMap<Player, SwordsGamePlayerRestore> players = new ConcurrentHashMap<Player, SwordsGamePlayerRestore>(); // Used for keeping track of who's in which game.
+	public final ConcurrentHashMap<String, SwordsGameClass> games = new ConcurrentHashMap<String, SwordsGameClass>();
 	public ConcurrentHashMap<String, SwordsGameArenaClass> arenas = new ConcurrentHashMap<String, SwordsGameArenaClass>();
 	public ConcurrentHashMap<String, SwordsGameLobbyClass> lobbies = new ConcurrentHashMap<String, SwordsGameLobbyClass>();
-	public ConcurrentHashMap<Player, SwordsGameDefine> define = new ConcurrentHashMap<Player, SwordsGameDefine>();
+	public final ConcurrentHashMap<Player, SwordsGameDefine> define = new ConcurrentHashMap<Player, SwordsGameDefine>();
 
 	@Override
 	public void onDisable() {
@@ -156,6 +156,7 @@ public class SwordsGame extends JavaPlugin {
 		pm.registerEvent(Event.Type.BLOCK_PLACE, blockListener, Event.Priority.High, this);
 		pm.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.High, this);
 		updateLobbySigns();
+		initConfig();
 		// Check for updates
 		try {
 			updateCheck();
@@ -170,7 +171,7 @@ public class SwordsGame extends JavaPlugin {
 		return cmd.execute(sender, command, commandLabel, args);
 	}
 
-	public Double clamp(Double value, Double compare1, Double compare2) {
+	Double clamp(Double value, Double compare1, Double compare2) {
 		double min;
 		double max;
 		if (compare2 < compare1) {
@@ -218,7 +219,7 @@ public class SwordsGame extends JavaPlugin {
 		}
 	}
 
-	public String local(String path) { //Get the corrosponding localisation string
+	public String local(String path) { //Get the corresponding localisation string
 		return localisation.get(path);
 	}
 
@@ -236,28 +237,28 @@ public class SwordsGame extends JavaPlugin {
 			Vector port = new Vector(lobby.portX, lobby.portY, lobby.portZ);
 			port.toLocation(toWorld(lobby.world)).subtract(0, 1, 0).getBlock().setType(Material.GLOWSTONE);
 			for (double i = 0; i < 3; i++) {
-				if (lobby.face == "NORTH") {
+				if (lobby.face.equals("NORTH")) {
 					if (i == 0 || i == 1) {
 						port.toLocation(toWorld(lobby.world)).add(0, i, 1).getBlock().setType(Material.STONE);
 						port.toLocation(toWorld(lobby.world)).add(0, i, -1).getBlock().setType(Material.STONE);
 					} else {
 						port.toLocation(toWorld(lobby.world)).add(0, i, 0).getBlock().setType(Material.STONE);
 					}
-				} else if (lobby.face == "SOUTH") {
+				} else if (lobby.face.equals("SOUTH")) {
 					if (i == 0 || i == 1) {
 						port.toLocation(toWorld(lobby.world)).add(0, i, 1).getBlock().setType(Material.STONE);
 						port.toLocation(toWorld(lobby.world)).add(0, i, -1).getBlock().setType(Material.STONE);
 					} else {
 						port.toLocation(toWorld(lobby.world)).add(0, i, 0).getBlock().setType(Material.STONE);
 					}
-				} else if (lobby.face == "WEST") {
+				} else if (lobby.face.equals("WEST")) {
 					if (i == 0 || i == 1) {
 						port.toLocation(toWorld(lobby.world)).add(1, i, 0).getBlock().setType(Material.STONE);
 						port.toLocation(toWorld(lobby.world)).add(-1, i, 0).getBlock().setType(Material.STONE);
 					} else {
 						port.toLocation(toWorld(lobby.world)).add(0, i, 0).getBlock().setType(Material.STONE);
 					}
-				} else if (lobby.face == "EAST") {
+				} else if (lobby.face.equals("EAST")) {
 					if (i == 0 || i == 1) {
 						port.toLocation(toWorld(lobby.world)).add(1, i, 0).getBlock().setType(Material.STONE);
 						port.toLocation(toWorld(lobby.world)).add(-1, i, 0).getBlock().setType(Material.STONE);
@@ -267,13 +268,13 @@ public class SwordsGame extends JavaPlugin {
 				}
 			}
 			Vector sign = new Vector(lobby.signX, lobby.signY, lobby.signZ);
-			if (lobby.face == "NORTH") {
+			if (lobby.face.equals("NORTH")) {
 				sign.toLocation(toWorld(lobby.world)).getBlock().setTypeIdAndData(68, (byte) 0x5, true);
-			} else if (lobby.face == "SOUTH") {
+			} else if (lobby.face.equals("SOUTH")) {
 				sign.toLocation(toWorld(lobby.world)).getBlock().setTypeIdAndData(68, (byte) 0x4, true);
-			} else if (lobby.face == "WEST") {
+			} else if (lobby.face.equals("WEST")) {
 				sign.toLocation(toWorld(lobby.world)).getBlock().setTypeIdAndData(68, (byte) 0x2, true);
-			} else if (lobby.face == "EAST") {
+			} else if (lobby.face.equals("EAST")) {
 				sign.toLocation(toWorld(lobby.world)).getBlock().setTypeIdAndData(68, (byte) 0x3, true);
 			}
 			Sign signSign = (Sign) sign.toLocation(toWorld(lobby.world)).getBlock().getState();
@@ -314,7 +315,7 @@ public class SwordsGame extends JavaPlugin {
 		}
 	}
 
-	public void updateCheck() throws IOException {
+	void updateCheck() throws IOException {
 		URL url = new URL("http://dl.dropbox.com/u/677732/uploads/SwordsGame.jar");
 		int urlSize = url.openConnection().getContentLength();
 		File pluginFile = new File("plugins" + File.separator + "SwordsGame.jar");
@@ -391,17 +392,9 @@ public class SwordsGame extends JavaPlugin {
 
 	public boolean hasPermissions(Player player, String permission) {
 		if (permissions3) {
-			if (permissions.has(player, permission)) {
-				return true;
-			} else {
-				return false;
-			}
+			return permissions.has(player, permission);
 		} else {
-			if (player.hasPermission(permission)) {
-				return true;
-			} else {
-				return false;
-			}
+			return player.hasPermission(permission);
 		}
 	}
 }

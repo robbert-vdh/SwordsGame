@@ -1,20 +1,18 @@
 # Tested with RB [_1000_] (http://ci.bukkit.org/job/dev-CraftBukkit/1000/)
 ## Dependencies:
 -   Permissions 3 (or you could use SuperPerms)
--   BukkitContrib (will be downloaded automatically)
+-   Spout
 
 ## Permission nodes:
 -   swordsgame.define - Define/remove arenas and be able to modify existing arenas
 -   swordsgame.play - Play SwordsGame and list games/arenas
--   (SuperPerms)swordsgame.* - This will give acces to the above two permission nodes
+-   (SuperPerms)swordsgame.* - This will give access to the above two permission nodes
 
 ## Todo:
 -   Some major code rewriting.
 -   Make people face the center of the arena upon joining.
--   People can put out fires.
 	
 ## Ideas:
--   Add economy support.
 -   Boot people from games when they use fly- or speedhacks.
 
 ## Notes:
@@ -24,6 +22,11 @@
 -   Both the killer and the killed player are send to their spawn upon a kill, to prevent camping. This can be disabled in the config.
 
 ## Changelog:
+
+__1.3__
+
+> -   Changed to cap from 4 players to 20. Arenas can now have between 0 and 20 spawns.
+-   Some code optimization.
 
 __1.2.5__
 

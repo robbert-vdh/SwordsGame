@@ -7,15 +7,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SwordsGameLocalisation {
-	private SwordsGame plugin;
-	File configFile = new File("plugins" + File.separator + "SwordsGame" + File.separator + "localisation.yml");
+	private final File configFile = new File("plugins" + File.separator + "SwordsGame" + File.separator + "localisation.yml");
 
-	public SwordsGameLocalisation(SwordsGame instance) {
-		plugin = instance;
+	public SwordsGameLocalisation() {
 		initConfig();
 	}
 
-	public Configuration config() {
+	Configuration config() {
 		try {
 			Configuration config = new Configuration(configFile);
 			config.load();
@@ -38,7 +36,8 @@ public class SwordsGameLocalisation {
 		return returnMap;
 	}
 
-	public void initConfig() {
+	@SuppressWarnings({"ResultOfMethodCallIgnored"})
+	void initConfig() {
 		configFile.getParentFile().mkdir();
 		if (!configFile.exists()) {
 			try {

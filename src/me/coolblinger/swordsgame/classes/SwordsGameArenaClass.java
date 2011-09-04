@@ -5,16 +5,16 @@ import org.bukkit.util.Vector;
 import java.io.Serializable;
 
 public class SwordsGameArenaClass implements Serializable {
-	public double[] cornerX = new double[2];
-	public double[] cornerZ = new double[2];
+	public final double[] cornerX = new double[2];
+	public final double[] cornerZ = new double[2];
 
-	double[] spawnX = new double[20];
-	double[] spawnY = new double[20];
-	double[] spawnZ = new double[20];
+	final double[] spawnX = new double[20];
+	final double[] spawnY = new double[20];
+	final double[] spawnZ = new double[20];
 	public int spawnCount = 0;
 
-	public String name;
-	public String world; // World has to be a string, or else serialization would be hard.
+	public final String name;
+	public final String world; // World has to be a string, or else serialization would be hard.
 
 	public SwordsGameArenaClass(String _name, String _world, Vector _corner1, Vector _corner2) {
 		cornerX[0] = _corner1.getX();

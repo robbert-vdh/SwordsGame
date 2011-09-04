@@ -13,7 +13,7 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 import java.util.Arrays;
 
 public class SwordsGameCommand {
-	SwordsGame plugin;
+	private final SwordsGame plugin;
 
 	public SwordsGameCommand(SwordsGame instance) {
 		plugin = instance;
@@ -29,62 +29,48 @@ public class SwordsGameCommand {
 			if (args.length == 0) {
 				// Print a list of commands that 'sender' is allowed to execute.
 				printCommandList(player);
-				return true;
 			} else if (args.length >= 1) {
 				if (args[0].equalsIgnoreCase("define")) {
 					define(player, args);
-					return true;
 				} else if (args[0].equalsIgnoreCase("remove")) {
 					remove(player, args);
-					return true;
 				} else if (args[0].equalsIgnoreCase("lobby")) {
 					if (args.length >= 2) {
 						if (args[1].equalsIgnoreCase("create")) {
 							createLobby(player, args);
-							return true;
 						} else if (args[1].equalsIgnoreCase("remove")) {
 							removeLobby(player, args);
-							return true;
 						} else {
 							printCommandList(player);
-							return true;
 						}
 					} else {
 						printCommandList(player);
-						return true;
 					}
 				} else if (args[0].equalsIgnoreCase("setspawns")) {
 					setSpawns(player);
-					return true;
 				} else if (args[0].equalsIgnoreCase("resetspawns")) {
 					resetSpawns(player, args);
-					return true;
 				} else if (args[0].equalsIgnoreCase("list")) {
 					list(player, args);
-					return true;
 				} else if (args[0].equalsIgnoreCase("game")) {
 					if (!plugin.configBoolean("lobbyOnly")) {
 						game(player, args);
 					} else {
 						player.sendMessage(ChatColor.RED + plugin.local("error.lobbyOnly"));
 					}
-					return true;
 				} else if (args[0].equalsIgnoreCase("leave")) {
 					leave(player);
-					return true;
 				} else {
 					printCommandList(player);
-					return true;
 				}
 			} else {
 				printCommandList(player);
-				return true;
 			}
 		}
 		return true;
 	}
 
-	public void printCommandList(Player player) {
+	void printCommandList(Player player) {
 		player.sendMessage(ChatColor.GOLD + "SwordsGame:");
 		player.sendMessage(ChatColor.GOLD + "-----------");
 		if (plugin.hasPermissions(player, "swordsgame.define")) {
@@ -118,7 +104,7 @@ public class SwordsGameCommand {
 		}
 	}
 
-	public void define(Player player, String[] args) {
+	void define(Player player, String[] args) {
 		if (plugin.hasPermissions(player, "swordsgame.define")) {
 			SpoutPlayer sPlayer = (SpoutPlayer) player;
 			if (!plugin.define.containsKey(player)) {
@@ -126,10 +112,10 @@ public class SwordsGameCommand {
 				sPlayer.sendNotification(plugin.local("defining.defining.BukkitContrib.notificationTitle1"), plugin.local("defining.defining.BukkitContrib.notificationText1"), Material.MAP);
 				player.sendMessage(ChatColor.GREEN + plugin.local("defining.defining.text1") + ChatColor.GOLD + "/sg define <name>" + ChatColor.GREEN + plugin.local("defining.defining.text2"));
 			} else {
-				if (plugin.define.get(player).mode == "setspawns") {
+				if (plugin.define.get(player).mode.equals("setspawns")) {
 					player.sendMessage(ChatColor.RED + plugin.local("errors.defining.spawnsWhileDefining"));
 				} else {
-					if (plugin.define.get(player).corner1 != null && plugin.define.get(player).corner2 != null && plugin.define.get(player).mode == "define") {
+					if (plugin.define.get(player).corner1 != null && plugin.define.get(player).corner2 != null && plugin.define.get(player).mode.equals("define")) {
 						if (args.length >= 2) {
 							if (!plugin.arenas.containsKey(args[1])) {
 								plugin.arenas.put(args[1], new SwordsGameArenaClass(args[1], plugin.define.get(player).world.getName(), plugin.define.get(player).corner1, plugin.define.get(player).corner2));
@@ -153,7 +139,7 @@ public class SwordsGameCommand {
 		}
 	}
 
-	public void remove(Player player, String[] args) {
+	void remove(Player player, String[] args) {
 		if (plugin.hasPermissions(player, "swordsgame.define")) {
 			if (args.length >= 2) {
 				if (plugin.arenas.containsKey(args[1])) {
@@ -173,7 +159,7 @@ public class SwordsGameCommand {
 		}
 	}
 
-	public void createLobby(Player player, String[] args) {
+	void createLobby(Player player, String[] args) {
 		if (plugin.hasPermissions(player, "swordsgame.define")) {
 			if (args.length >= 3) {
 				if (plugin.arenas.containsKey(args[2])) {
@@ -193,7 +179,7 @@ public class SwordsGameCommand {
 		}
 	}
 
-	public void removeLobby(Player player, String[] args) {
+	void removeLobby(Player player, String[] args) {
 		if (plugin.hasPermissions(player, "swordsgame.define")) {
 			if (args.length >= 3) {
 				if (plugin.arenas.containsKey(args[2])) {
@@ -213,7 +199,7 @@ public class SwordsGameCommand {
 		}
 	}
 
-	public void setSpawns(Player player) {
+	void setSpawns(Player player) {
 		SpoutPlayer sPlayer = (SpoutPlayer) player;
 		if (plugin.hasPermissions(player, "swordsgame.define")) {
 			if (!plugin.define.containsKey(player)) {
@@ -221,7 +207,7 @@ public class SwordsGameCommand {
 				sPlayer.sendNotification(plugin.local("defining.settingSpawns.BukkitContrib.notificationTitle1"), plugin.local("defining.settingSpawns.BukkitContrib.notificationText1"), Material.MAP);
 				player.sendMessage(ChatColor.GREEN + plugin.local("defining.settingSpawns.help"));
 			} else {
-				if (plugin.define.get(player).mode == "setspawns") {
+				if (plugin.define.get(player).mode.equals("setspawns")) {
 					player.sendMessage(ChatColor.RED + plugin.local("errors.settingSpawns.alreadySettingSpawns"));
 				} else {
 					player.sendMessage(ChatColor.RED + plugin.local("errors.settingSpawns.alreadyDefiningArenas"));
@@ -232,7 +218,7 @@ public class SwordsGameCommand {
 		}
 	}
 
-	public void resetSpawns(Player player, String[] args) {
+	void resetSpawns(Player player, String[] args) {
 		if (plugin.hasPermissions(player, "swordsgame.define")) {
 			if (args.length >= 2) {
 				if (plugin.arenas.containsKey(args[1])) {
@@ -249,7 +235,7 @@ public class SwordsGameCommand {
 		}
 	}
 
-	public void list(Player player, String[] args) {
+	void list(Player player, String[] args) {
 		if (plugin.hasPermissions(player, "swordsgame.play")) {
 			Object[] arenaList = plugin.arenas.keySet().toArray();
 			Arrays.sort(arenaList);
@@ -321,7 +307,7 @@ public class SwordsGameCommand {
 		}
 	}
 
-	public void leave(Player player) {
+	void leave(Player player) {
 		if (plugin.hasPermissions(player, "swordsgame.play")) {
 			if (plugin.players.containsKey(player)) {
 				plugin.players.get(player).restore();

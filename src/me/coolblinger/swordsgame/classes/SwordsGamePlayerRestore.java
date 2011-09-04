@@ -9,10 +9,10 @@ import org.bukkit.inventory.ItemStack;
 
 public class SwordsGamePlayerRestore {
 	public Location location;
-	public ItemStack[] inventory;
-	public Player player;
-	private SwordsGame plugin;
-	public String arena;
+	private final ItemStack[] inventory;
+	private final Player player;
+	private final SwordsGame plugin;
+	public final String arena;
 	public boolean noDamage = false; // Used in the entity listener, to prevent weapon spamming.
 	public boolean noMovement = false; // Used in the player listener, to prevent the PLAYER_MOVE event from getting fired twice.
 

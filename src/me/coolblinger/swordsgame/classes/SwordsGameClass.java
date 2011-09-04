@@ -17,20 +17,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SwordsGameClass {
-	private SwordsGame plugin;
-	private AppearanceManager aManager = SpoutManager.getAppearanceManager();
-	private SoundManager sManager = SpoutManager.getSoundManager();
-	public int maxPlayers;
-	public Player[] players;
-	public int[] weapon;
-	private List<ItemStack> weaponList = new ArrayList<ItemStack>();
+	private final SwordsGame plugin;
+	private final AppearanceManager aManager = SpoutManager.getAppearanceManager();
+	private final SoundManager sManager = SpoutManager.getSoundManager();
+	private final int maxPlayers;
+	private final Player[] players;
+	private int[] weapon;
+	private final List<ItemStack> weaponList = new ArrayList<ItemStack>();
 	public int playercount = 0;
-	public boolean isStarted = false;
-	public boolean isPlaying = false;
-	public Vector[] spawns;
-	public String arenaName;
-	public World world;
-	public Vector[] arenaCorners = new Vector[2];
+	private boolean isStarted = false;
+	private boolean isPlaying = false;
+	private final Vector[] spawns;
+	private final String arenaName;
+	private final World world;
+	private final Vector[] arenaCorners = new Vector[2];
 
 	public SwordsGameClass(Player player, SwordsGameArenaClass arenaClass, SwordsGame swordsGame) {
 		plugin = swordsGame;
@@ -68,7 +68,7 @@ public class SwordsGameClass {
 					}, 100); // This will start the game approximately 5 seconds after the second player joins.
 				} else if (playercount >= 2 && isStarted) {
 					sManager.playCustomSoundEffect(plugin, (SpoutPlayer) players[i], "http://dl.dropbox.com/u/677732/Minecraft/quakeplay.wav", true);
-					rankUp(players[i], true);
+					rankUp(players[i]);
 				}
 				return true;
 			}
@@ -109,7 +109,7 @@ public class SwordsGameClass {
 		}
 	}
 
-	public void toSpawnAll() {
+	void toSpawnAll() {
 		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] != null) {
 				toSpawn(players[i], false);
@@ -117,7 +117,7 @@ public class SwordsGameClass {
 		}
 	}
 
-	public void playSound(String url) {
+	void playSound(String url) {
 		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] != null) {
 				SpoutPlayer sPlayer = (SpoutPlayer) players[i];
@@ -126,7 +126,7 @@ public class SwordsGameClass {
 		}
 	}
 
-	public void messagePlayers(String message) {
+	void messagePlayers(String message) {
 		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] != null) {
 				players[i].sendMessage(message);
@@ -135,7 +135,7 @@ public class SwordsGameClass {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void start() {
+	void start() {
 		weapon = new int[4];
 		weaponList.clear();
 		if (plugin.configBoolean("ladder.custom")) {
@@ -159,14 +159,14 @@ public class SwordsGameClass {
 		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] != null) {
 				players[i].setHealth(20);
-				rankUp(players[i], false);
+				rankUp(players[i]);
 			}
 		}
 		playSound("http://dl.dropbox.com/u/677732/Minecraft/quakeplay.wav");
 		messagePlayers(ChatColor.GOLD + plugin.local("games.started"));
 	}
 
-	public void stop() {
+	void stop() {
 		isStarted = false;
 		isPlaying = false;
 		messagePlayers(ChatColor.GOLD + plugin.local("games.aborted"));
@@ -182,7 +182,7 @@ public class SwordsGameClass {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void rankUp(Player player, boolean notify) {
+	void rankUp(Player player) {
 		if (isPlaying) {
 			for (int i = 0; i < maxPlayers; i++) {
 				if (players[i] == player) {
@@ -212,7 +212,7 @@ public class SwordsGameClass {
 		}
 	}
 
-	public void reset(Player winner) {
+	void reset(Player winner) {
 		isPlaying = false;
 		toSpawnAll();
 		for (int i = 0; i < maxPlayers; i++) {
@@ -264,7 +264,7 @@ public class SwordsGameClass {
 				if (plugin.configBoolean("spawnOnKill")) {
 					toSpawn(players[i], false);
 				}
-				rankUp(killer, true);
+				rankUp(killer);
 				break;
 			}
 		}
@@ -277,7 +277,7 @@ public class SwordsGameClass {
 					weapon[i]--;
 					player.getInventory().clear();
 					if (plugin.configBoolean("ladder.custom")) {
-						List<Integer> idList = plugin.configList("ladder.sideItems");
+						@SuppressWarnings({"unchecked"}) List<Integer> idList = plugin.configList("ladder.sideItems");
 						for (int id : idList) {
 							players[i].getInventory().addItem(new ItemStack(id, 1));
 						}
@@ -304,7 +304,7 @@ public class SwordsGameClass {
 		}
 	}
 
-	public void leadTitles() {
+	void leadTitles() {
 		List<Player> leadPlayers = getLead();
 		if (leadPlayers.size() == 1) {
 			for (int i = 0; i < maxPlayers; i++) {
@@ -333,7 +333,7 @@ public class SwordsGameClass {
 		}
 	}
 
-	public List<Player> getLead() {
+	List<Player> getLead() {
 		int highest = 0;
 		List<Player> highestList = new ArrayList<Player>();
 		for (int i = 0; i <= 3; i++) {
