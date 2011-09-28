@@ -8,13 +8,6 @@
 -   swordsgame.play - Play SwordsGame and list games/arenas
 -   (SuperPerms)swordsgame.* - This will give access to the above two permission nodes
 
-## Todo:
--   Some major code rewriting.
--   Make people face the center of the arena upon joining.
-	
-## Ideas:
--   Boot people from games when they use fly- or speedhacks.
-
 ## Notes:
 -   I would GREATLY appreciate it if people could help me fix the English localisation.
 -   The client side Spout mod is not required, but it will make the experience better, using sounds, notes and several other things.

@@ -1,7 +1,5 @@
 package me.coolblinger.swordsgame;
 
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
 import me.coolblinger.swordsgame.classes.*;
 import me.coolblinger.swordsgame.listeners.SwordsGameBlockListener;
 import me.coolblinger.swordsgame.listeners.SwordsGameEntityListener;
@@ -15,7 +13,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,8 +28,6 @@ import java.util.logging.Logger;
 
 public class SwordsGame extends JavaPlugin {
 	private final Logger log = Logger.getLogger("Minecraft");
-	private boolean permissions3;
-	private PermissionHandler permissions;
 	private final SwordsGameLocalisation localisationConfig = new SwordsGameLocalisation();
 	private final ConcurrentHashMap<String, String> localisation = localisationConfig.getLocalisation();
 	private final SwordsGamePlayerListener playerListener = new SwordsGamePlayerListener(this);
@@ -88,15 +83,6 @@ public class SwordsGame extends JavaPlugin {
 			log.severe("Spout was not found, SwordsGame will disable itself.");
 			setEnabled(false);
 			return;
-		}
-		// Initialize permissions:
-		Plugin permissionsPlugin = pm.getPlugin("Permissions");
-		if (permissionsPlugin == null) {
-			log.severe("Permissions3 was not found, " + pdFile.getName() + " will use SuperPerms instead.");
-			permissions3 = false;
-		} else {
-			permissions = ((Permissions) permissionsPlugin).getHandler();
-			permissions3 = true;
 		}
 		// Loading arenas
 		File arenaFile = new File("plugins/SwordsGame/arenas.dat");
@@ -388,13 +374,5 @@ public class SwordsGame extends JavaPlugin {
 		org.bukkit.util.config.Configuration config = getConfiguration();
 		config.load();
 		return config.getBoolean(path, false);
-	}
-
-	public boolean hasPermissions(Player player, String permission) {
-		if (permissions3) {
-			return permissions.has(player, permission);
-		} else {
-			return player.hasPermission(permission);
-		}
 	}
 }

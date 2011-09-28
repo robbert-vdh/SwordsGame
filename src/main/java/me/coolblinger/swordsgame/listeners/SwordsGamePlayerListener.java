@@ -97,7 +97,7 @@ public class SwordsGamePlayerListener extends PlayerListener {
 		if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
 			Block block = event.getClickedBlock().getRelative(event.getBlockFace());
 			if (block.getType() == Material.FIRE && event.getBlockFace() == BlockFace.UP) {
-				if (plugin.hasPermissions(player, "swordsgame.define")) {
+				if (player.hasPermission("swordsgame.define")) {
 					if (plugin.players.containsKey(player)) {
 						event.setCancelled(true);
 						return;
