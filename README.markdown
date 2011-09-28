@@ -20,6 +20,7 @@ __1.4__
 
 > -   Removed Permissions3 support.
 -   Toggleable randomization of spawns.
+-   Removed the update check thing.
 
 > -   Changed to cap from 4 players to 20. Arenas can now have between 0 and 20 spawns.
 -   Some code optimization.
