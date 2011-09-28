@@ -30,14 +30,11 @@ public class SwordsGameClass {
 	private final Vector[] spawns;
 	private final String arenaName;
 	private final World world;
-	private final Vector[] arenaCorners = new Vector[2];
 
 	public SwordsGameClass(Player player, SwordsGameArenaClass arenaClass, SwordsGame swordsGame) {
 		plugin = swordsGame;
 		arenaName = arenaClass.name;
 		world = plugin.toWorld(arenaClass.world);
-		arenaCorners[0] = new Vector(arenaClass.cornerX[0], 0, arenaClass.cornerZ[0]);
-		arenaCorners[1] = new Vector(arenaClass.cornerX[1], 128, arenaClass.cornerZ[1]);
 		maxPlayers = plugin.arenas.get(arenaName).spawnCount;
 		players = new Player[maxPlayers];
 		weapon = new int[maxPlayers];
@@ -56,7 +53,7 @@ public class SwordsGameClass {
 				players[i] = player;
 				playercount++;
 				plugin.players.put(player, new SwordsGamePlayerRestore(player, arenaName, plugin));
-				toSpawn(players[i], true);
+				toSpawn(players[i], true, false);
 				messagePlayers(ChatColor.AQUA + players[i].getDisplayName() + ChatColor.GREEN + plugin.local("games.playerJoined"));
 				if (!isStarted && playercount >= 2) {
 					BukkitScheduler bScheduler = plugin.getServer().getScheduler();
@@ -96,10 +93,16 @@ public class SwordsGameClass {
 		return false;
 	}
 
-	public void toSpawn(Player player, boolean message) {
+	public void toSpawn(Player player, boolean message, boolean random) {
 		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] == player) {
-				Vector spawnLoc = new Vector(spawns[i].getX() + 0.5, spawns[i].getY(), spawns[i].getZ() + 0.5);
+				Vector spawnLoc = null;
+				if (!random) {
+					spawnLoc = new Vector(spawns[i].getX() + 0.5, spawns[i].getY(), spawns[i].getZ() + 0.5);
+				} else {
+					Integer number = Integer.parseInt(String.valueOf(Math.round(Math.random() * (maxPlayers - 1))));
+					spawnLoc = new Vector(spawns[number].getX() + 0.5, spawns[number].getY(), spawns[number].getZ() + 0.5);
+				}
 				players[i].teleport(spawnLoc.toLocation(world));
 				if (message) {
 					player.sendMessage(ChatColor.RED + plugin.local("games.leaveCommand") + ChatColor.GOLD + "/sg leave" + ChatColor.RED + ".");
@@ -112,7 +115,7 @@ public class SwordsGameClass {
 	void toSpawnAll() {
 		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] != null) {
-				toSpawn(players[i], false);
+				toSpawn(players[i], false, false);
 			}
 		}
 	}
@@ -255,14 +258,14 @@ public class SwordsGameClass {
 						players[i].getInventory().addItem(new ItemStack(320, 1)); //Cooked porkchop
 					}
 				}
-				toSpawn(players[i], false);
+				toSpawn(players[i], false, plugin.configBoolean("randomSpawns"));
 				break;
 			}
 		}
 		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] == killer) {
 				if (plugin.configBoolean("spawnOnKill")) {
-					toSpawn(players[i], false);
+					toSpawn(players[i], false, plugin.configBoolean("randomSpawns"));
 				}
 				rankUp(killer);
 				break;
@@ -291,7 +294,7 @@ public class SwordsGameClass {
 					leadTitles();
 				}
 				players[i].setHealth(20);
-				toSpawn(players[i], false);
+				toSpawn(players[i], false, plugin.configBoolean("randomSpawns"));
 				final Player finalPlayer = players[i];
 				BukkitScheduler bScheduler = plugin.getServer().getScheduler();
 				bScheduler.scheduleAsyncDelayedTask(plugin, new Runnable() {

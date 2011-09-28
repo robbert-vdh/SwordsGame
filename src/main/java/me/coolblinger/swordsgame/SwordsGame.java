@@ -335,6 +335,10 @@ public class SwordsGame extends JavaPlugin {
 			config.setProperty("spawnOnKill", true);
 			config.save();
 		}
+		if (config.getProperty("randomSpawns") == null) {
+			config.setProperty("randomSpawns", false);
+			config.save();
+		}
 		if (config.getProperty("lobbyOnly") == null) {
 			config.setProperty("lobbyOnly", false);
 			config.save();

@@ -319,4 +319,4 @@ public class SwordsGameCommand {
 			printCommandList(player);
 		}
 	}
-} 
+}
