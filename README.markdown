@@ -1,4 +1,4 @@
-# Tested with RB [_1000_] (http://ci.bukkit.org/job/dev-CraftBukkit/1000/)
+# Tested with RB [_1185_] (http://ci.bukkit.org/job/dev-CraftBukkit/1185/)
 ## Dependencies:
 -   Permissions 3 (or you could use SuperPerms)
 -   Spout
@@ -26,7 +26,7 @@ __1.3__
 
 > -   Changed to cap from 4 players to 20. Arenas can now have between 0 and 20 spawns.
 -   Some code optimization.
--   Spout won't be downloaded automatically anymore.
+-   Spout won't be downloa  ded automatically anymore.
 
 __1.2.5__
 
