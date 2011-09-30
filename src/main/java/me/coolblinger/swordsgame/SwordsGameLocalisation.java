@@ -153,7 +153,7 @@ public class SwordsGameLocalisation {
 			config.save();
 		}
 		if (config.getProperty("defining.defining.setSpawns") == null) {
-			config.setProperty("defining.defining.setSpawns", "You should set four spawnpoints now, using ");
+			config.setProperty("defining.defining.setSpawns", "You should set spawnpoints now, using ");
 			config.save();
 		}
 		if (config.getProperty("defining.defining.BukkitContrib.notificationTitle2") == null) {

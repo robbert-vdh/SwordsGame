@@ -1,6 +1,7 @@
 package me.coolblinger.swordsgame.classes;
 
 import me.coolblinger.swordsgame.SwordsGame;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -9,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class SwordsGamePlayerRestore {
 	public Location location;
+	public GameMode mode;
 	private final ItemStack[] inventory;
 	private final Player player;
 	private final SwordsGame plugin;
@@ -18,16 +20,19 @@ public class SwordsGamePlayerRestore {
 
 	public SwordsGamePlayerRestore(Player _player, String _arena, SwordsGame _plugin) {
 		player = _player;
+		mode = player.getGameMode();
 		location = player.getLocation();
 		inventory = player.getInventory().getContents();
 		arena = _arena;
 		plugin = _plugin;
 		player.setHealth(20);
 		player.getInventory().clear();
+		player.sendMessage(player.getGameMode().name());
 	}
 
 	public void restore() {
 		player.getInventory().setContents(inventory);
+		player.setGameMode(mode);
 		player.teleport(location);
 		plugin.players.remove(player);
 		plugin.games.get(arena).removePlayer(player);

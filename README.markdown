@@ -16,6 +16,11 @@
 
 ## Changelog:
 
+__1.4.1__
+
+> -   Fixed an error in the localisation.
+-   Players will now automatically switch to survival mode if they're in creative mode.
+
 __1.4__
 
 > -   Removed Permissions3 support.
