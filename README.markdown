@@ -20,6 +20,7 @@ __1.4.1__
 
 > -   Fixed an error in the localisation.
 -   Players will now automatically switch to survival mode if they're in creative mode.
+-   The play sound should now get pre-cached.
 
 __1.4__
 

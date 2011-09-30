@@ -17,6 +17,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
+import org.getspout.spoutapi.SpoutManager;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -76,12 +77,12 @@ public class SwordsGame extends JavaPlugin {
 		SwordsGameDirectory.mkdir();
 		PluginDescriptionFile pdFile = this.getDescription();
 		PluginManager pm = getServer().getPluginManager();
-		// Autodownloading Spout
 		if (pm.getPlugin("Spout") == null) {
 			log.severe("Spout was not found, SwordsGame will disable itself.");
 			setEnabled(false);
 			return;
 		}
+		SpoutManager.getFileManager().addToCache(this, "http://dl.dropbox.com/u/677732/Minecraft/quakeplay.wav");
 		// Loading arenas
 		File arenaFile = new File("plugins/SwordsGame/arenas.dat");
 		if (!arenaFile.exists() || arenaFile.length() == 0) {
