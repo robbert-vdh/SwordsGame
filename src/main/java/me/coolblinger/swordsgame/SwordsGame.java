@@ -82,7 +82,11 @@ public class SwordsGame extends JavaPlugin {
 			setEnabled(false);
 			return;
 		}
-		SpoutManager.getFileManager().addToCache(this, "http://dl.dropbox.com/u/677732/Minecraft/quakeplay.wav");
+		SpoutManager.getFileManager().addToCache(this, "http://dl.dropbox.com/u/677732/Minecraft/quake_humiliation.wav");
+		SpoutManager.getFileManager().addToCache(this, "http://dl.dropbox.com/u/677732/Minecraft/quake_lostlead.wav");
+		SpoutManager.getFileManager().addToCache(this, "http://dl.dropbox.com/u/677732/Minecraft/quake_prepare.wav");
+		SpoutManager.getFileManager().addToCache(this, "http://dl.dropbox.com/u/677732/Minecraft/quake_takenlead.wav");
+		SpoutManager.getFileManager().addToCache(this, "http://dl.dropbox.com/u/677732/Minecraft/quake_tiedlead.wav"); //todo
 		// Loading arenas
 		File arenaFile = new File("plugins/SwordsGame/arenas.dat");
 		if (!arenaFile.exists() || arenaFile.length() == 0) {

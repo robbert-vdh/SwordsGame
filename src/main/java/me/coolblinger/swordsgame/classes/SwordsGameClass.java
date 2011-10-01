@@ -23,6 +23,7 @@ public class SwordsGameClass {
 	private final int maxPlayers;
 	private final Player[] players;
 	private int[] weapon;
+	private List<Player> oldLeads = new ArrayList<Player>(); //Used for comparing leads.
 	private final List<ItemStack> weaponList = new ArrayList<ItemStack>();
 	public int playercount = 0;
 	private boolean isStarted = false;
@@ -64,8 +65,8 @@ public class SwordsGameClass {
 						}
 					}, 100); // This will start the game approximately 5 seconds after the second player joins.
 				} else if (playercount >= 2 && isStarted) {
-					sManager.playCustomSoundEffect(plugin, (SpoutPlayer) players[i], "http://dl.dropbox.com/u/677732/Minecraft/quakeplay.wav", true);
-					rankUp(players[i]);
+					sManager.playCustomSoundEffect(plugin, (SpoutPlayer) players[i], "http://dl.dropbox.com/u/677732/Minecraft/quake_prepare.wav", true);
+					rankUp(players[i], true);
 				}
 				return true;
 			}
@@ -124,7 +125,7 @@ public class SwordsGameClass {
 		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] != null) {
 				SpoutPlayer sPlayer = (SpoutPlayer) players[i];
-				sManager.playCustomSoundEffect(plugin, sPlayer, url, true);
+				sManager.playCustomSoundEffect(plugin, sPlayer, url, false);
 			}
 		}
 	}
@@ -162,10 +163,10 @@ public class SwordsGameClass {
 		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] != null) {
 				players[i].setHealth(20);
-				rankUp(players[i]);
+				rankUp(players[i], true);
 			}
 		}
-		playSound("http://dl.dropbox.com/u/677732/Minecraft/quakeplay.wav");
+		playSound("http://dl.dropbox.com/u/677732/Minecraft/quake_prepare.wav");
 		messagePlayers(ChatColor.GOLD + plugin.local("games.started"));
 	}
 
@@ -185,7 +186,7 @@ public class SwordsGameClass {
 	}
 
 	@SuppressWarnings("unchecked")
-	void rankUp(Player player) {
+	void rankUp(Player player, boolean first) {
 		if (isPlaying) {
 			for (int i = 0; i < maxPlayers; i++) {
 				if (players[i] == player) {
@@ -208,7 +209,7 @@ public class SwordsGameClass {
 						weapon[i]++;
 						reset(player);
 					}
-					leadTitles();
+					leadTitles(first);
 					break;
 				}
 			}
@@ -267,7 +268,7 @@ public class SwordsGameClass {
 				if (plugin.configBoolean("spawnOnKill")) {
 					toSpawn(players[i], false, plugin.configBoolean("randomSpawns"));
 				}
-				rankUp(killer);
+				rankUp(killer, false);
 				break;
 			}
 		}
@@ -290,8 +291,15 @@ public class SwordsGameClass {
 					if (weaponList.get(weapon[i] - 1).getType() != Material.AIR) {
 						players[i].getInventory().addItem(weaponList.get(weapon[i] - 1));
 					}
-					players[i].sendMessage(ChatColor.GREEN + plugin.local("games.downRank") + ChatColor.AQUA + weapon[i] + ChatColor.GREEN + plugin.local("defining.list.outOf") + ChatColor.AQUA + weaponList.size() + ChatColor.GREEN + ".");
-					leadTitles();
+					players[i].sendMessage(ChatColor.GREEN + "You've been demoted to rank " + ChatColor.AQUA + weapon[i] + ChatColor.GREEN + " out of " + ChatColor.AQUA + weaponList.size() + ChatColor.GREEN + ".");
+					for (int n = 0; n < maxPlayers; n++) {
+						if (players[n] == null || players[n] == players[i]) {
+							continue;
+						}
+						players[n].sendMessage(ChatColor.GREEN + "'" + ChatColor.WHITE + players[i].getDisplayName() + ChatColor.GREEN + "' has been demoted to rank " + ChatColor.AQUA + weapon[i] + ChatColor.GREEN + " out of " + ChatColor.AQUA + weaponList.size() + ChatColor.GREEN + ".");
+					}
+					playSound("http://dl.dropbox.com/u/677732/Minecraft/quake_humiliation.wav");
+					leadTitles(false);
 				}
 				players[i].setHealth(20);
 				toSpawn(players[i], false, plugin.configBoolean("randomSpawns"));
@@ -307,9 +315,29 @@ public class SwordsGameClass {
 		}
 	}
 
-	void leadTitles() {
+	void leadTitles(boolean first) {
 		List<Player> leadPlayers = getLead();
-		if (leadPlayers.size() == 1) {
+		if (!first) {
+			for (Player lead : oldLeads) {
+				if (!leadPlayers.contains(lead)) {
+					SpoutPlayer sPlayer = (SpoutPlayer) lead;
+					sManager.playCustomSoundEffect(plugin, sPlayer, "http://dl.dropbox.com/u/677732/Minecraft/quake_lostlead.wav", false);
+				}
+			}
+			for (Player lead : leadPlayers) {
+				if (leadPlayers.size() != 1) {
+					SpoutPlayer sPlayer = (SpoutPlayer) lead;
+					sManager.playCustomSoundEffect(plugin, sPlayer, "http://dl.dropbox.com/u/677732/Minecraft/quake_tiedlead.wav", false);
+				} else if (oldLeads.size() != 1) {
+					SpoutPlayer sPlayer = (SpoutPlayer) lead;
+					sManager.playCustomSoundEffect(plugin, sPlayer, "http://dl.dropbox.com/u/677732/Minecraft/quake_takenlead.wav", false);
+				}
+			}
+		}
+
+		if (leadPlayers.size() == 1)
+
+		{
 			for (int i = 0; i < maxPlayers; i++) {
 				if (players[i] == null) {
 					continue;
@@ -323,7 +351,9 @@ public class SwordsGameClass {
 					}
 				}
 			}
-		} else if (leadPlayers.size() > 1) {
+		} else if (leadPlayers.size() > 1)
+
+		{
 			for (int i = 0; i < maxPlayers; i++) {
 				if (players[i] == null) {
 					continue;
@@ -334,6 +364,8 @@ public class SwordsGameClass {
 				}
 			}
 		}
+
+		oldLeads = leadPlayers;
 	}
 
 	List<Player> getLead() {
