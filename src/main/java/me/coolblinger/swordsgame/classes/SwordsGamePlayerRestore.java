@@ -27,6 +27,7 @@ public class SwordsGamePlayerRestore {
 		plugin = _plugin;
 		player.setHealth(20);
 		player.getInventory().clear();
+		player.setGameMode(GameMode.SURVIVAL);
 	}
 
 	public void restore() {
