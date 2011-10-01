@@ -9,14 +9,17 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.getspout.spoutapi.SpoutManager;
+import org.getspout.spoutapi.gui.*;
 import org.getspout.spoutapi.player.AppearanceManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.sound.SoundManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class SwordsGameClass {
+public class SwordsGameClass { //I should really do a cleanup of this.
 	private final SwordsGame plugin;
 	private final AppearanceManager aManager = SpoutManager.getAppearanceManager();
 	private final SoundManager sManager = SpoutManager.getSoundManager();
@@ -77,6 +80,9 @@ public class SwordsGameClass {
 	public boolean removePlayer(Player player) {
 		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] == player) {
+				SpoutPlayer sPlayer = (SpoutPlayer) players[i];
+				InGameHUD hud = sPlayer.getMainScreen();
+				hud.removeWidgets(plugin);
 				messagePlayers(ChatColor.AQUA + players[i].getDisplayName() + ChatColor.GREEN + plugin.local("games.playerLeft"));
 				aManager.resetGlobalTitle(players[i]);
 				players[i] = null;
@@ -205,11 +211,11 @@ public class SwordsGameClass {
 							player.getInventory().addItem(weaponList.get(weapon[i] - 1));
 						}
 						player.sendMessage(ChatColor.GREEN + plugin.local("games.rank") + ChatColor.AQUA + weapon[i] + ChatColor.GREEN + plugin.local("defining.list.outOf") + ChatColor.AQUA + weaponList.size() + ChatColor.GREEN + ".");
+						leadTitles(first);
 					} else {
 						weapon[i]++;
 						reset(player);
 					}
-					leadTitles(first);
 					break;
 				}
 			}
@@ -221,6 +227,9 @@ public class SwordsGameClass {
 		toSpawnAll();
 		for (int i = 0; i < maxPlayers; i++) {
 			if (players[i] != null) {
+				SpoutPlayer sPlayer = (SpoutPlayer) players[i];
+				InGameHUD hud = sPlayer.getMainScreen();
+				hud.removeWidgets(plugin);
 				players[i].getInventory().clear();
 				players[i].setHealth(20);
 			}
@@ -316,6 +325,40 @@ public class SwordsGameClass {
 	}
 
 	void leadTitles(boolean first) {
+		List<Player> playerList = new ArrayList<Player>();
+		for (int i = 0; i < maxPlayers; i++) {
+			if (players[i] != null) {
+				playerList.add(players[i]);
+			}
+		}
+		List<String> labels = new ArrayList<String>();
+		for (Player player : playerList) {
+			int index = Arrays.asList(players).indexOf(player);
+			int rank = weapon[index];
+			labels.add(rank + " - " + player.getDisplayName());
+		}
+		Collections.sort(labels);
+		Collections.reverse(labels);
+		for (int i = 0; i < maxPlayers; i++) {
+			if (players[i] == null) {
+				continue;
+			}
+			SpoutPlayer sPlayer = (SpoutPlayer) players[i];
+			InGameHUD hud = sPlayer.getMainScreen();
+			hud.removeWidgets(plugin);
+			GenericContainer gc = new GenericContainer();
+			gc.setX(5);
+			gc.setY(5);
+			int y = 10;
+			gc.setLayout(ContainerType.VERTICAL);
+			gc.addChild(new GenericLabel("Scoreboard:").setTextColor(new Color(238, 201, 0)));
+			gc.addChild(new GenericLabel(" ").setY(y));
+			for (String label : labels) {
+				y += 10;
+				gc.addChild(new GenericLabel(label).setY(y));
+			}
+			hud.attachWidget(plugin, gc);
+		}
 		List<Player> leadPlayers = getLead();
 		if (!first) {
 			for (Player lead : oldLeads) {
@@ -335,9 +378,7 @@ public class SwordsGameClass {
 			}
 		}
 
-		if (leadPlayers.size() == 1)
-
-		{
+		if (leadPlayers.size() == 1) {
 			for (int i = 0; i < maxPlayers; i++) {
 				if (players[i] == null) {
 					continue;
@@ -351,9 +392,7 @@ public class SwordsGameClass {
 					}
 				}
 			}
-		} else if (leadPlayers.size() > 1)
-
-		{
+		} else if (leadPlayers.size() > 1) {
 			for (int i = 0; i < maxPlayers; i++) {
 				if (players[i] == null) {
 					continue;
@@ -364,7 +403,6 @@ public class SwordsGameClass {
 				}
 			}
 		}
-
 		oldLeads = leadPlayers;
 	}
 
