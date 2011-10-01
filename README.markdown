@@ -8,12 +8,13 @@
 
 ## Changelog:
 
-__1.4.1__
+__1.5__
 
 > -   Fixed an error in the localisation.
 -   Players will now automatically switch to survival mode if they're in creative mode.
 -   The sounds should now get pre-cached.
 -   Moar and better sounds!
+-   Scoreboard using spout.
 
 __1.4__
 
@@ -25,7 +26,7 @@ __1.3__
 
 > -   Changed to cap from 4 players to 20. Arenas can now have between 0 and 20 spawns.
 -   Some code optimization.
--   Spout won't be downloa  ded automatically anymore.
+-   Spout won't be downloaded automatically anymore.
 
 __1.2.5__
 
